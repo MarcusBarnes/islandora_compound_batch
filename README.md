@@ -83,40 +83,6 @@ The queue of preprocessed items can then be processed:
 
 `drush -v --user=admin --uri=http://localhost islandora_batch_ingest`
 
-### Sample compound_object MODS.xml file
-Here is a sample MODS file describing a compound_object. Note that it does not contain a `<relatedItem>` element as a direct child of `<mods>`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <titleInfo>
-      <title>Canadian Jewish Review, June 1, 1928</title>
-    </titleInfo>
-    <originInfo>
-      <place>
-        <placeTerm>Toronto, Ontario</placeTerm>
-      </place>
-      <publisher>Canadian Jewish Review </publisher>
-      <dateIssued encoding="iso8601">1928-06-01</dateIssued>
-    </originInfo>
-    <language>
-      <languageTerm>eng</languageTerm>
-    </language>
-    <subject>
-      <topic>Jews, Canadian -- Ontario -- Toronto -- History -- Newspapers</topic>
-      <topic>Jews, Canadian -- Quebec -- Montreal -- History -- Newspapers</topic>
-      <topic>Jews -- History -- 20th century -- Newspapers</topic>
-      <topic>Jews -- Canada -- Periodicals</topic>
-      <topic>Canada -- History -- 20th century -- Newspapers</topic>
-      <topic>Ontario -- History -- 20th century -- Newspapers</topic>
-      <topic>Quebec -- History -- 20th century -- Newspapers</topic>
-      <topic>Toronto (Ont.) -- History -- 20th century -- Newspapers</topic>
-      <topic>Montreal (Que.) -- History -- 20th century -- Newspapers</topic>
-    </subject>
-    <identifier>Cjewish-1928-06-01</identifier>
-</mods>
-```
-
 ## Troubleshooting/Issues
 
 Having problems or solved a problem? Check out the Islandora google groups for a solution.
