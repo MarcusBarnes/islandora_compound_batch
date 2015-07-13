@@ -1,21 +1,21 @@
 <?php
 /**
  * @file
- * Module used to handle newspaper batches through the UI and drush.
+ * Module used to handle compound object batches through the UI and drush.
  */
 
 /**
  * Implements hook_menu().
  */
-function islandora_newspaper_batch_menu() {
+function islandora_compound_batch_menu() {
   $items = array();
 
-  $items['islandora/object/%islandora_object/manage/newspaper_batch'] = array(
-    'title' => 'Newspaper Batch',
-    'access callback' => 'islandora_newspaper_batch_menu_access',
+  $items['islandora/object/%islandora_object/manage/compound_batch'] = array(
+    'title' => 'Compound Batch',
+    'access callback' => 'islandora_compound_batch_menu_access',
     'access arguments' => array(2),
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_newspaper_batch_form', 2),
+    'page arguments' => array('islandora_compound_batch_form', 2),
     'file' => 'includes/batch.form.inc',
     'type' => MENU_LOCAL_ACTION,
   );
@@ -26,7 +26,7 @@ function islandora_newspaper_batch_menu() {
 /**
  * Menu access callback.
  */
-function islandora_newspaper_batch_menu_access($object) {
+function islandora_compound_batch_menu_access($object) {
   if (!islandora_object_access(ISLANDORA_INGEST, $object)) {
     return FALSE;
   }
