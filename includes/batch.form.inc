@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Form to kickoff a newspaper batch ingest from the front-end.
+ * Form to kickoff a compound object batch ingest from the front-end.
  */
 
 /**
  * Form building function.
  */
-function islandora_newspaper_batch_form($form, &$form_state, $object) {
-  form_load_include($form_state, 'inc', 'islandora_newspaper_batch', 'includes/batch.form');
+function islandora_compound_batch_form($form, &$form_state, $object) {
+  form_load_include($form_state, 'inc', 'islandora_compound_batch', 'includes/batch.form');
   module_load_include('inc', 'islandora', 'includes/utilities');
   $default_namespace = islandora_get_namespace($object->id);
 
   $form['target'] = array(
     '#type' => 'managed_file',
     '#title' => t('Zip file'),
-    '#description' => t('A Zip file containing a number of newspaper issues. Each newspaper issue is structured as a directory, containing a number of directories representing pages. Basenames will be used as datastream identifiers except or "--METADATA--". "--METADATA--" can be either a .xml containing XML (MODS, DC or MARCXML), or a .mrc (Binary MARC), which will be transformed to produce both a MODS and DC stream.'),
+    '#description' => t('A Zip file containing a number of compound objects. Each compound object is structured as a directory, containing a number of directories representing subojects. Basenames will be used as datastream identifiers except or "--METADATA--". "--METADATA--" can be either a .xml containing XML (MODS, DC or MARCXML), or a .mrc (Binary MARC), which will be transformed to produce both a MODS and DC stream.'),
     '#required' => TRUE,
     '#upload_location' => 'public://',
     '#upload_validators' => array(
@@ -28,16 +28,17 @@ function islandora_newspaper_batch_form($form, &$form_state, $object) {
     '#type' => 'value',
     '#value' => $object->id,
   );
-
+   
   $form['create_pdfs'] = array(
     '#type' => 'checkbox',
     '#title' => t('Create PDFs?'),
-    '#description' => t('Whether or not we should generate PDFs for the newspaper issues after ingesting all of the pages.'),
+    '#description' => t('Whether or not we should generate PDFs for the appropriate objects within the compound objects after ingesting all objects.'),
   );
+  
   $form['namespace'] = array(
     '#type' => 'textfield',
     '#title' => t('Namespace for created objects?'),
-    '#description' => t('Newspaper issue and page objects will be contructed within this namespace.'),
+    '#description' => t('Compound objects and child objects will be contructed within this namespace.'),
     "#default_value" => $default_namespace,
     '#size' => 15,
   );
@@ -56,7 +57,7 @@ function islandora_newspaper_batch_form($form, &$form_state, $object) {
   $form['email_admin'] = array(
     '#type' => 'checkbox',
     '#title' => t('Notify admin after ingest?'),
-    '#description' => t('Whether or not we should notify the site admin that a newspaper issue has been ingested after the ingest of the newspaper issue completes (requires relevant "Rules" rule).'),
+    '#description' => t('Whether or not we should notify the site admin that a compound object has been ingested after the ingest of the compound object completes (requires relevant "Rules" rule).'),
   );
 
   $form['ingest_set_immediately'] = array(
@@ -79,7 +80,7 @@ function islandora_newspaper_batch_form($form, &$form_state, $object) {
  *
  * May kick off a batch process.
  */
-function islandora_newspaper_batch_form_submit($form, $form_state) {
+function islandora_compound_batch_form_submit($form, $form_state) {
   $target = file_load($form_state['values']['target']);
 
   $form_state['values']['target'] = $target->uri;
@@ -94,7 +95,7 @@ function islandora_newspaper_batch_form_submit($form, $form_state) {
     'content_models' => array('islandora:newspaperIssueCModel'),
   );
 
-  $preprocessor = new IslandoraNewspaperBatch($connection, $parameters);
+  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
   file_usage_add($target, 'islandora_batch', 'islandora_batch_set', $preprocessor->getSetId());
 
   if ($form_state['values']['ingest_set_immediately']) {
