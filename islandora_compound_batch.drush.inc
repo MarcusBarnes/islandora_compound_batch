@@ -8,15 +8,15 @@
 /**
  * Implements hook_drush_command().
  */
-function islandora_newspaper_batch_drush_command() {
+function islandora_compound_batch_drush_command() {
   $items = array();
 
-  $items['islandora_newspaper_batch_preprocess'] = array(
+  $items['islandora_compound_batch_preprocess'] = array(
     'aliases' => array('inbp'),
     'description' => 'Preprocessed newspaper issues into database entries.',
     'drupal dependencies' => array('islandora_batch',
       'islandora_newspaper',
-      'islandora_newspaper_batch'),
+      'islandora_compound_batch'),
     'options' => array(
       'type' => array(
         'description' => 'Either "directory" or "zip".',
@@ -75,7 +75,7 @@ function islandora_newspaper_batch_drush_command() {
 /**
  * Implements hook_drush_command().
  */
-function drush_islandora_newspaper_batch_preprocess() {
+function drush_islandora_compound_batch_preprocess() {
   // XXX: Due to how Drush bootstrapping works, the connection may be created
   // without credentials (when your site's front page is
   // 'islandora/object/some:object', for example). Resetting to ensure a new
@@ -108,7 +108,7 @@ function drush_islandora_newspaper_batch_preprocess() {
   else {
     $parameters['generate_ocr'] = TRUE;
   }
-  $preprocessor = new IslandoraNewspaperBatch($connection, $parameters);
+  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
 
   // Pass the preprocessor off to run.
   $preprocessed = islandora_batch_handle_preprocessor($preprocessor);
@@ -117,7 +117,7 @@ function drush_islandora_newspaper_batch_preprocess() {
 /**
  * Parent validation.
  */
-function drush_islandora_newspaper_batch_preprocess_validate() {
+function drush_islandora_compound_batch_preprocess_validate() {
   $parent = drush_get_option('parent');
   $object = islandora_object_load($parent);
   if (!$object) {
