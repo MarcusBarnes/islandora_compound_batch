@@ -11,7 +11,7 @@
  * XXX: We should probably make IslandoraPagedContentBatch and have the
  * other two batches extend the base.
  */
-class IslandoraNewspaperBatch extends IslandoraScanBatch {
+class IslandoraCompoundBatch extends IslandoraScanBatch {
   /**
    * Static function to get object class.
    */
