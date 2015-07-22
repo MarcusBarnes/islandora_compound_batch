@@ -8,10 +8,10 @@
 /**
  * Implements hook_default_rules_configuration().
  */
-function islandora_newspaper_batch_default_rules_configuration() {
+function islandora_compound_batch_default_rules_configuration() {
   $configs = array();
-  $parse_exported = '{ "islandora_newspaper_batch_newspaper_issue_ingested" : {
-    "LABEL" : "Newspaper Issue Ingested",
+  $parse_exported = '{ "islandora_compound_batch_compound_object_ingested" : {
+    "LABEL" : "Compound Object Ingested - Development",
     "PLUGIN" : "reaction rule",
     "OWNER" : "rules",
     "REQUIRES" : [ "rules", "islandora" ],
@@ -61,8 +61,8 @@ function islandora_newspaper_batch_default_rules_configuration() {
   $parsed_parse = rules_import($parse_exported);
   $configs[$parsed_parse->name] = $parsed_parse;
 
-  $complete_exported = '{ "islandora_newspaper_batch_newspaper_issue_batch_complete" : {
-    "LABEL" : "Newspaper Issue Batch Complete",
+  $complete_exported = '{ "islandora_compound_batch_compound_object_batch_complete" : {
+    "LABEL" : "Compound Object Batch Complete",
     "PLUGIN" : "reaction rule",
     "WEIGHT" : "10",
     "OWNER" : "rules",
