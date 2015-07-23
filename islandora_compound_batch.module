@@ -30,5 +30,5 @@ function islandora_compound_batch_menu_access($object) {
   if (!islandora_object_access(ISLANDORA_INGEST, $object)) {
     return FALSE;
   }
-  return in_array('islandora:newspaperCModel', $object->models);
+  return in_array('islandora:compoundCModel', $object->models);
 }
