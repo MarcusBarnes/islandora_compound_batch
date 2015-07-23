@@ -12,7 +12,7 @@ function islandora_compound_batch_drush_command() {
   $items = array();
 
   $items['islandora_compound_batch_preprocess'] = array(
-    'aliases' => array('inbp'),
+    'aliases' => array('icbp'),
     'description' => 'Preprocessed newspaper issues into database entries.',
     'drupal dependencies' => array('islandora_batch',
       'islandora_newspaper',
