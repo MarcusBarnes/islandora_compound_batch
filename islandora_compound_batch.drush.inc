@@ -13,7 +13,7 @@ function islandora_compound_batch_drush_command() {
 
   $items['islandora_compound_batch_preprocess'] = array(
     'aliases' => array('icbp'),
-    'description' => 'Preprocessed newspaper issues into database entries.',
+    'description' => 'Preprocess compoud objects into database entries.',
     'drupal dependencies' => array('islandora_batch',
       'islandora_newspaper',
       'islandora_compound_batch'),
@@ -31,7 +31,7 @@ function islandora_compound_batch_drush_command() {
         'required' => FALSE,
       ),
       'content_models' => array(
-        'description' => 'A comma-separated list of content models to assign to the objects. Only applies to the "newspaper issue" level object.',
+        'description' => 'A comma-separated list of content models to assign to the objects. Only applies to the top-level object.',
         'value' => 'optional',
       ),
       'parent' => array(
