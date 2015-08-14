@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <titleInfo>
+    <title>TEST TWO CHILD SUBOBJECT</title>
+  </titleInfo>
+  <language>
+    <languageTerm type="text">English</languageTerm>
+    <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+  </language>
+  <subject authority="lsch">
+    <topic>TEST TWO CHILD SUBOBJECT</topic>
+  </subject>
+  <typeOfResource>still image</typeOfResource>
+  <accessCondition>You can use this resource.</accessCondition>
+  <originInfo>
+    <dateIssued encoding="iso8601" keyDate="yes">2015-08-14</dateIssued>
+  </originInfo>
+</mods>

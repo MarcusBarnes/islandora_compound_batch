@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <titleInfo>
+    <title>TEST CHILD OBJECT ONE - BLUE SQUARE</title>
+  </titleInfo>
+  <subject authority="lsch">
+    <topic>TEST CHILD OBJECT ONE - BLUE SQUARE</topic>
+  </subject>
+  <typeOfResource>still image</typeOfResource>
+  <accessCondition>You can use this resource.</accessCondition>
+  <originInfo>
+    <dateIssued encoding="iso8601" keyDate="yes">2015-08-14</dateIssued>
+  </originInfo>
+</mods>
