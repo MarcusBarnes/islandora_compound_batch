@@ -54,17 +54,20 @@ function islandora_compound_batch_drush_command() {
         'description' => 'A flag to allow for conditional OCR generation.',
         'value' => 'optional',
       ),
+      /*
       'email_admin' => array(
-        'description' => 'A flag to notify the site admin when the newspaper issue is fully ingested (depends on Rules being enabled).',
+        'description' => 'A flag to notify the site admin when the compound object is fully ingested (depends on Rules being enabled).',
         'value' => 'optional',
-      ),
+      ),*/
+      /*
       'wait_for_metadata' => array(
-        'description' => 'A flag to indicate that we should hold off on trying to ingest newspaper issues until we have metadata available for them at the newspaper issue level.',
+        'description' => 'A flag to indicate that we should hold off on trying to ingest compound objects until we have metadata available for them at the compound object level.',
         'value' => 'optional',
-      ),
+      ),*/
+      /*
       'directory_dedup' => array(
-        'description' => 'A flag to indicate that we should avoid repreprocessing newspaper issues which are located in directories.',
-      ),
+        'description' => 'A flag to indicate that we should avoid repreprocessing compound objects which are located in directories.',
+      ),*/
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
