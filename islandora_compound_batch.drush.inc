@@ -92,17 +92,17 @@ function drush_islandora_compound_batch_preprocess() {
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
     'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
-    'create_pdfs' => drush_get_option('create_pdfs', FALSE),
+    /*'create_pdfs' => drush_get_option('create_pdfs', FALSE),*/
     'email_admin' => drush_get_option('email_admin', FALSE),
-    'wait_for_metadata' => drush_get_option('wait_for_metadata', FALSE),
-    'directory_dedup' => drush_get_option('directory_dedup', FALSE),
+    /*'wait_for_metadata' => drush_get_option('wait_for_metadata', FALSE),*/
+    /*'directory_dedup' => drush_get_option('directory_dedup', FALSE),*/
   );
 
   if ($content_models = drush_get_option('content_models', FALSE)) {
     $parameters['content_models'] = explode(',', $content_models);
   }
   else {
-    $parameters['content_models'] = array('islandora:newspaperIssueCModel');
+    $parameters['content_models'] = array('islandora:compoundCModel');
   }
 
   if ($do_not_generate = drush_get_option('do_not_generate_ocr', FALSE)) {
