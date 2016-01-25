@@ -13,9 +13,9 @@ function islandora_compound_batch_drush_command() {
 
   $items['islandora_compound_batch_preprocess'] = array(
     'aliases' => array('icbp'),
-    'description' => 'Preprocess compoud objects into database entries.',
+    'description' => 'Preprocess compound objects into database entries.',
     'drupal dependencies' => array('islandora_batch',
-      'islandora_newspaper',
+      'islandora_compound',
       'islandora_compound_batch'),
     'options' => array(
       'type' => array(
@@ -46,10 +46,10 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The predicate of the relationship to the parent. Defaults to "isMemberOf".',
         'value' => 'optional',
       ),
-      'create_pdfs' => array(
+      /*'create_pdfs' => array(
         'description' => 'A flag to cause PDFs to be created in newspaper issues. Page PDF creation is dependant on the configuration within Drupal proper.',
         'value' => 'optional',
-      ),
+      ),*/
       'do_not_generate_ocr' => array(
         'description' => 'A flag to allow for conditional OCR generation.',
         'value' => 'optional',
