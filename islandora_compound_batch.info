@@ -4,6 +4,6 @@ package = Islandora
 version = 7.x-dev
 core = 7.x
 dependencies[] = islandora_batch
-dependencies[] = islandora_compound
+dependencies[] = islandora_compound_object
 files[] = includes/islandora_compound_batch.inc
 php = 5.3
