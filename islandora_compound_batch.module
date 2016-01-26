@@ -5,6 +5,23 @@
  */
 
 /**
+ * Implements hook_CMODEL_PID_islandora_object_ingested().
+ */
+/* 
+function islandora_book_batch_islandora_bookCModel_islandora_object_ingested($object) {
+  if ($object->relationships->get(ISLANDORA_RELS_EXT_URI, 'book-batched', 'true', RELS_TYPE_PLAIN_LITERAL)) {
+    if (module_exists('rules')) {
+      // Allow rules to respond to this event. (To allow configurable messages
+      // for mailing and such).
+      rules_invoke_event('islandora_book_batch_ingested', $object->id);
+    }
+    $object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'book-batched', 'true', RELS_TYPE_PLAIN_LITERAL);
+    $object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'email-admin-when-ingested', 'true', RELS_TYPE_PLAIN_LITERAL);
+  }
+}
+*/
+
+/**
  * Implements hook_menu().
  */
 function islandora_compound_batch_menu() {
@@ -30,5 +47,13 @@ function islandora_compound_batch_menu_access($object) {
   if (!islandora_object_access(ISLANDORA_INGEST, $object)) {
     return FALSE;
   }
-  return in_array('islandora:compoundCModel', $object->models);
+
+  $c = 'COLLECTION_POLICY';
+  if (isset($object[$c]) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object[$c])) {
+    $cp = new CollectionPolicy($object[$c]->content);
+
+    return array_key_exists('islandora:bookCModel', $cp->getContentModels());
+  }
+
+  return FALSE;
 }
