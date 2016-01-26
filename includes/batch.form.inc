@@ -54,11 +54,13 @@ function islandora_compound_batch_form($form, &$form_state, $object) {
       );
     }
   }*/
+  /*
   $form['email_admin'] = array(
     '#type' => 'checkbox',
     '#title' => t('Notify admin after ingest?'),
     '#description' => t('Whether or not we should notify the site admin that a compound object has been ingested after the ingest of the compound object completes (requires relevant "Rules" rule).'),
   );
+  */
 
   $form['ingest_set_immediately'] = array(
     '#type' => 'checkbox',
