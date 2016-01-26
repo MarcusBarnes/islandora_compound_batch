@@ -27,7 +27,7 @@ function islandora_book_batch_islandora_bookCModel_islandora_object_ingested($ob
 function islandora_compound_batch_menu() {
   $items = array();
 
-  $items['islandora/object/%islandora_object/manage/compound_batch'] = array(
+  $items['islandora/object/%islandora_object/manage/collection/compound_batch'] = array(
     'title' => 'Compound Batch',
     'access callback' => 'islandora_compound_batch_menu_access',
     'access arguments' => array(2),
@@ -51,8 +51,8 @@ function islandora_compound_batch_menu_access($object) {
   $c = 'COLLECTION_POLICY';
   if (isset($object[$c]) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object[$c])) {
     $cp = new CollectionPolicy($object[$c]->content);
-
-    return array_key_exists('islandora:bookCModel', $cp->getContentModels());
+    
+    return array_key_exists('islandora:compoundCModel', $cp->getContentModels());
   }
 
   return FALSE;
