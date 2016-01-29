@@ -16,13 +16,16 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
    * Static function to get object class.
    */
   protected static function getObjectClass() {
-    return 'IslandoraNewspaperIssueBatchObject';
+    return 'IslandoraCompoundBatchObject';
   }
-
+  
   /**
    * Parses the file listing into the structure we use.
    *
    * @overrides IslandoraScanBatch::groupFiles()
+   *
+   * Note groupFiles is used within preprocess method of islandora_scan_batch.inc
+   *
    */
   protected function groupFiles($listing) {
     $files = array();
@@ -55,13 +58,13 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
 
       $q = db_select('islandora_batch_resources', 'r')
         ->fields('r')
-        ->condition('type', 'newspaper_directory')
+        ->condition('type', 'compound_directory')
         ->condition('resource', $target . '%', 'LIKE');
 
       // Remove entries from the $files array which already exist in the
       // resources table.
       foreach ($q->execute() as $result) {
-        // Grab the relative path of the newspaper resource entry.
+        // Grab the relative path of the compound resource entry.
         $relative_path = substr($result->resource, $target_length + 1);
 
         // Unset the entry from the array, if it exists.
@@ -114,7 +117,7 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
           ))
           ->condition('id', $children, 'IN')
           ->execute();
-        // Set newspaper issue ready to go (after children, that is).
+        // Set compound object ready to go (after children, that is).
         db_update('islandora_batch_state')
           ->fields(array(
             'state' => ISLANDORA_BATCH_STATE__PENDING_CHILDREN,
@@ -137,7 +140,7 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
  * @TODO: Should use IslandoraFlatBatchObject which itself should be moved into
  * islandora_batch.
  */
-class IslandoraNewspaperFlatBatchObject extends IslandoraScanBatchObject {
+class IslandoraFlatBatchObject extends IslandoraScanBatchObject {
   /**
    * Function batchProcess.
    */
@@ -361,9 +364,9 @@ EOXML;
 }
 
 /**
- * Class IslandoraNewspaperIssueBatchObject.
+ * Class IslandoraCompoundBatchObject.
  */
-class IslandoraNewspaperIssueBatchObject extends IslandoraNewspaperFlatBatchObject {
+class IslandoraCompoundBatchObject extends IslandoraFlatBatchObject {
   /**
    * Function class constructor.
    */
@@ -408,7 +411,7 @@ class IslandoraNewspaperIssueBatchObject extends IslandoraNewspaperFlatBatchObje
 
     foreach ($this->objectInfo as $sequence => $info) {
       if ($sequence != '.') {
-        $children[] = new IslandoraNewspaperPageBatchObject($connection, $this->id, $sequence, $info, $this->preprocessorParameters);
+        $children[] = new IslandoraCompoundChildBatchObject($connection, $this->id, $sequence, $info, $this->preprocessorParameters);
       }
     }
 
@@ -421,12 +424,13 @@ class IslandoraNewspaperIssueBatchObject extends IslandoraNewspaperFlatBatchObje
   public function addRelationships() {
     parent::addRelationships();
     module_load_include('inc', 'islandora_paged_content', 'includes/derivatives');
+    module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
 
     if (isset($this->preprocessorParameters['create_pdfs']) && $this->preprocessorParameters['create_pdfs']) {
       islandora_paged_content_set_pdf_flag($this);
     }
     // Identify the source of this object.
-    $this->relationships->add(ISLANDORA_RELS_EXT_URI, 'newspaper-batched', 'true', RELS_TYPE_PLAIN_LITERAL);
+    $this->relationships->add(ISLANDORA_RELS_EXT_URI, 'compound-batched', 'true', RELS_TYPE_PLAIN_LITERAL);
     if (isset($this->preprocessorParameters['email_admin']) && $this->preprocessorParameters['email_admin']) {
       $this->relationships->add(ISLANDORA_RELS_EXT_URI, 'email-admin-when-ingested', 'true', RELS_TYPE_PLAIN_LITERAL);
     }
@@ -434,9 +438,9 @@ class IslandoraNewspaperIssueBatchObject extends IslandoraNewspaperFlatBatchObje
 }
 
 /**
- * Class IslandoraNewspaperPageBatchObject.
+ * Class IslandoraCompoundChildBatchObject.
  */
-class IslandoraNewspaperPageBatchObject extends IslandoraNewspaperFlatBatchObject {
+class IslandoraCompoundChildBatchObject extends IslandoraFlatBatchObject {
   protected $parentId;
   protected $sequenceNumber;
 
@@ -487,9 +491,11 @@ class IslandoraNewspaperPageBatchObject extends IslandoraNewspaperFlatBatchObjec
     islandora_paged_content_set_relationship($rels_ext, FEDORA_RELS_EXT_URI, 'isMemberOf', $this->parentId);
     // Add content model relationship.
     $this->models = 'islandora:newspaperPageCModel';
+    /*
     if (isset($this->preprocessorParameters['generate_ocr'])) {
       module_load_include('inc', 'islandora_ocr', 'includes/derivatives');
       islandora_ocr_set_generate_ocr_rels_ext_statement($this, $this->preprocessorParameters['generate_ocr']);
     }
+    */
   }
 }
