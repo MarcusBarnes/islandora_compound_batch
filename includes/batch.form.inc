@@ -66,7 +66,7 @@ function islandora_compound_batch_form($form, &$form_state, $object) {
     '#type' => 'checkbox',
     '#title' => t('Ingest immediately?'),
     '#description' => t('If not selected, objects will just be preprocessed into the queue of objects to be ingested, to be fully-processed (and ingested) later--whenever an admin deems it an appropriate time.'),
-    '#default_value' => TRUE,
+    '#default_value' => FALSE,
   );
 
   $form['submit'] = array(
