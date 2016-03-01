@@ -35,7 +35,7 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
       $components = explode(DIRECTORY_SEPARATOR, $dir_name);
       $this->reGroup($files, $components, $relative_uri, $file_info);
     }
-
+    
     // We are not interested in files at the top level:
     unset($files['.']);
 
@@ -73,6 +73,7 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
         }
       }
     }
+    
     return $files;
   }
 
@@ -103,7 +104,7 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
     $added = parent::preprocess();
 
     $object_type = static::getObjectClass();
-
+   
     foreach ($added as $object) {
       if ($object instanceof $object_type) {
         $children = db_select('islandora_batch_queue', 'q')
@@ -129,7 +130,39 @@ class IslandoraCompoundBatch extends IslandoraScanBatch {
 
     return $added;
   }
+  
+  
+  
+  /**
+   * Recursively attempt to preprocess children.
+   */
+/*
+  protected function preprocessChildren(IslandoraBatchObject $object, $parent = NULL) {
+    $to_return = array();
+
+    // XXX: Squash exceptions and log 'em.
+    try {
+      $object->addRelationships();
+      $this->addToDatabase($object, $object->getResources(), $parent);
+      $to_return[] = $object;
+
+      foreach ($object->getChildren($this->connection) as $child) {
+        $to_return = array_merge($to_return, $this->preprocessChildren($child, $object->id));
+      }
+    }
+    catch (Exception $e) {
+      watchdog_exception('islandora_batch', $e);
+    }
+
+    return $to_return;
+  }
 }
+*/
+
+  
+}
+
+
 
 /**
  * Each directory is an object. Each contained file is a datastream.
