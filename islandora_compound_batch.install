@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Installation hooks.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function islandora_batch_schema() {
+    $schema['islandora_compound_batch'] = array(
+        // Specification for the "islandora_compound_batch" table
+        'description' => 'Registers data for batch ingest of compound objects.',
+        'fields'=> array(
+            'object_xpath' => array(
+                'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
+                'type' => 'varchar',
+                'length' => '255',
+                'not null' => TRUE,
+                'default' => '',                
+            ), 
+            'parent_xpath' => array(
+                'description' => "XPath of the child object's immediate parent. Populated during the batch preprocess phase.",
+                'type' => 'varchar',
+                'length' => '255',
+                'not null' => TRUE,
+                'default' => '',            
+            ),
+            'title' => array(
+                'description' => 'Applies to parent nodes only. If the node in the structure file has a title (as it will usually have in CONTENTdm compound objects), record it here for use during the bulk ingest phase.', 
+                'type' => 'varchar',
+                'length' => '255',
+                'defualt' => '',                        
+            ),
+            'object_pid' => array(
+                'description' => 'The PID of the child object. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.',
+                'type' => 'int',
+                'size' => 'big',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0,             
+            ),
+            'parent_pid' => array(
+                'description' => "The PID of the child's immediate parent. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.",
+                'type' => 'int',
+                'size' => 'big',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0, 
+            )                          
+        ),
+         
+    
+    );
+    
+    return $schema;
+}
