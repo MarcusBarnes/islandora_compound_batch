@@ -8,11 +8,11 @@
 /**
  * Implements hook_schema().
  */
-function islandora_batch_schema() {
+function islandora_compound_batch_schema() {
     $schema['islandora_compound_batch'] = array(
         // Specification for the "islandora_compound_batch" table
         'description' => 'Registers data for batch ingest of compound objects.',
-        'fields'=> array(
+        'fields' => array(
             'object_xpath' => array(
                 'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
                 'type' => 'varchar',
@@ -48,10 +48,9 @@ function islandora_batch_schema() {
                 'unsigned' => TRUE,
                 'not null' => TRUE,
                 'default' => 0, 
-            )                          
-        ),
-         
-    
+            ),   
+                  
+        )             
     );
     
     return $schema;
