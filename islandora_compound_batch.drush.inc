@@ -92,10 +92,6 @@ function drush_islandora_compound_batch_preprocess() {
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
     'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
-    /*'create_pdfs' => drush_get_option('create_pdfs', FALSE),*/
-    /*'email_admin' => drush_get_option('email_admin', FALSE),*/
-    /*'wait_for_metadata' => drush_get_option('wait_for_metadata', FALSE),*/
-    /*'directory_dedup' => drush_get_option('directory_dedup', FALSE),*/
   );
 
   if ($content_models = drush_get_option('content_models', FALSE)) {
@@ -104,18 +100,9 @@ function drush_islandora_compound_batch_preprocess() {
   else {
     $parameters['content_models'] = array('islandora:compoundCModel');
   }
-  /*  
-  if ($do_not_generate = drush_get_option('do_not_generate_ocr', FALSE)) {
-    $parameters['generate_ocr'] = FALSE;
-  }
-  else {
-    $parameters['generate_ocr'] = TRUE;
-  }
-  */
-  
-  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
-
+   
   // Pass the preprocessor off to run.
+  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
   $preprocessed = islandora_batch_handle_preprocessor($preprocessor);
 }
 
@@ -128,7 +115,8 @@ function drush_islandora_compound_batch_preprocess_validate() {
   if (!$object) {
     return drush_set_error('This is not a valid parent', dt('The specified parent (@parent) was unable to be loaded.', array('@parent' => $parent)));
   }
+  /*
   if (!in_array('islandora:compoundCModel', $object->models)) {
     return drush_set_error('Not a compound object', dt('The specified parent (@parent) is not a compound object.', array('@parent' => $parent)));
-  }
+  }*/
 }
