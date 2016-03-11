@@ -46,28 +46,6 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The predicate of the relationship to the parent. Defaults to "isMemberOf".',
         'value' => 'optional',
       ),
-      /*'create_pdfs' => array(
-        'description' => 'A flag to cause PDFs to be created in newspaper issues. Page PDF creation is dependant on the configuration within Drupal proper.',
-        'value' => 'optional',
-      ),*/
-      /*'do_not_generate_ocr' => array(
-        'description' => 'A flag to allow for conditional OCR generation.',
-        'value' => 'optional',
-      ),*/
-      /*
-      'email_admin' => array(
-        'description' => 'A flag to notify the site admin when the compound object is fully ingested (depends on Rules being enabled).',
-        'value' => 'optional',
-      ),*/
-      /*
-      'wait_for_metadata' => array(
-        'description' => 'A flag to indicate that we should hold off on trying to ingest compound objects until we have metadata available for them at the compound object level.',
-        'value' => 'optional',
-      ),*/
-      /*
-      'directory_dedup' => array(
-        'description' => 'A flag to indicate that we should avoid repreprocessing compound objects which are located in directories.',
-      ),*/
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
