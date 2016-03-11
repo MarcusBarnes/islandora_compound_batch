@@ -18,10 +18,11 @@ function islandora_compound_batch_drush_command() {
       'islandora_compound',
       'islandora_compound_batch'),
     'options' => array(
+      /*
       'type' => array(
         'description' => 'Either "directory" or "zip".',
         'required' => TRUE,
-      ),
+      ),*/
       'target' => array(
         'description' => 'The target to directory or zip file to scan.',
         'required' => TRUE,
