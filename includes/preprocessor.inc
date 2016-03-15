@@ -16,7 +16,11 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     // Accumulate a list of the objects added to the queue.
     $added = array();
     
-    }
+    $input_path = $this->parameters['target'];
+    
+    echo PHP_EOL . "You've successfully run the drush command." . PHP_EOL;
+    
+    
     return $added;
   }
 }
