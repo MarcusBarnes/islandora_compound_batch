@@ -68,13 +68,6 @@ function drush_islandora_compound_batch_preprocess() {
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
     'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
   );
-
-  if ($content_models = drush_get_option('content_models', FALSE)) {
-    $parameters['content_models'] = explode(',', $content_models);
-  }
-  else {
-    $parameters['content_models'] = array('islandora:compoundCModel');
-  }
    
   // Pass the preprocessor off to run.
   $preprocessor = new IslandoraCompoundBatchPreprocessor($connection, $parameters);
