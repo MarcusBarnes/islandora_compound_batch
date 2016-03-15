@@ -14,9 +14,8 @@ function islandora_compound_batch_drush_command() {
   $items['islandora_compound_batch_preprocess'] = array(
     'aliases' => array('icbp'),
     'description' => 'Preprocess compound objects into database entries.',
-    'drupal dependencies' => array('islandora_batch',
-      'islandora_compound',
-      'islandora_compound_batch'),
+    /*'drupal dependencies' => array('islandora_batch', 'islandora_solution_pack_compound'),*/
+    'drupal dependencies' => array('islandora_batch'),
     'options' => array(
       /*
       'type' => array(
@@ -24,16 +23,13 @@ function islandora_compound_batch_drush_command() {
         'required' => TRUE,
       ),*/
       'target' => array(
-        'description' => 'The target to directory or zip file to scan.',
+        /*'description' => 'The target to directory or zip file to scan.',*/
+        'description' => 'The target to directory to scan.',
         'required' => TRUE,
       ),
       'namespace' => array(
         'description' => 'The namespace for objects created by this command.  Defaults to namespace set in Fedora config.',
         'required' => FALSE,
-      ),
-      'content_models' => array(
-        'description' => 'A comma-separated list of content models to assign to the objects. Only applies to the top-level object.',
-        'value' => 'optional',
       ),
       'parent' => array(
         'description' => 'The collection to which the generated items should be added.  If "directory" and the directory containing the object description is a valid PID, it will be set as the parent. If this is specified and itself is a PID, all compound objects will be related to the given PID.',
@@ -81,7 +77,7 @@ function drush_islandora_compound_batch_preprocess() {
   }
    
   // Pass the preprocessor off to run.
-  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
+  $preprocessor = new IslandoraCompoundBatchPreprocessor($connection, $parameters);
   $preprocessed = islandora_batch_handle_preprocessor($preprocessor);
 }
 
