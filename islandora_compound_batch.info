@@ -7,4 +7,5 @@ dependencies[] = islandora_batch
 dependencies[] = islandora_compound_object
 files[] = includes/preprocessor.inc
 files[] = includes/object.inc
+files[] = includes/utilities.inc
 php = 5.3
