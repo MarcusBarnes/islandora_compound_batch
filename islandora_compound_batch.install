@@ -48,7 +48,15 @@ function islandora_compound_batch_schema() {
                 'unsigned' => TRUE,
                 'not null' => TRUE,
                 'default' => 0, 
-            ),   
+            ),
+              'batch_id' => array(
+                'description' => "The batch ID for which the object is a part of.",
+                'type' => 'int',
+                'size' => 'big',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0, 
+            ),     
                   
         )             
     );
