@@ -30,18 +30,22 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $obj = $this->constructDatastream('OBJ', 'M');
     $obj->label = 'OBJ Datastream';
     // must infer mimetype from file.
-    $obj->mimetype = 'application/xml';
+    $mime_detector = new MimeDetect();
+    $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
     $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
     $this->ingestDatastream($obj);
-
-    // MODS, then from it DC, datastreams.
+    
+    // MODS, then from it DC, datastreams.    
     if ($mods = $this->getMods()) {
+      
       $this->ingestDatastream($mods);
 
-      module_load_include('inc', 'islandora_solution_pack_xml', 'includes/utilities');
+      module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
       $path_to_mods_to_dc_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/mods_to_dc.xsl';
       $mods_to_dc_xsl = file_get_contents($path_to_mods_to_dc_xsl);
-      $dc_content = islandora_solution_pack_xml_apply_xslt($mods_to_dc_xsl, $mods->content);
+      // compound batch utilities class   
+      $cbUtilities = new Utilies;
+      $dc_content = $cbUtilities->apply_xslt($mods_to_dc_xsl, $mods->content);
       $dc = $this->constructDatastream('DC', 'M');
       $dc->mimetype = 'application/xml';
       $dc->label = 'DC Record';
@@ -62,18 +66,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       }
     }
 
-    // TN datastream.
-    if ($tn = $this->getTn()) {
-      $this->ingestDatastream($tn);
-    }
-
-    // RENDER_STYLESHEET datastream.
-    if ($rs = $this->getRenderStylesheet()) {
-      $this->ingestDatastream($rs);
-    }
-
     $this->addRelationships();
-
+    
     // Indicate that this object is ready to actually go into Fedora.
     return ISLANDORA_BATCH_STATE__DONE;
   }
@@ -94,48 +88,6 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   }
 
   /**
-   * Creates a TN datastream from a file matching the base object.
-   *
-   * @return object|FALSE
-   *   A datastream object for the thumbnail, or FALSE if no datastream
-   *   was created.
-   */
-  private function getTn() {
-    $tn_extensions = array('png', 'jpg', 'jpeg', 'gif');
-    $pathinfo = pathinfo($this->xmlObjFilePath);
-    $dir_name = $pathinfo['dirname'];
-    $file_name = $pathinfo['filename'];
-    $tn_file_path = '';
-    foreach ($tn_extensions as $ext) {
-      $tn_file_path = $dir_name . DIRECTORY_SEPARATOR . $file_name . '.TN.' . $ext;
-      if (file_exists($tn_file_path)) {
-        break;
-      }
-    }
-
-    if (file_exists($tn_file_path)) {
-      $tn_mime_detector = new MimeDetect();
-      $tn = $this->constructDatastream('TN', 'M');
-      $tn->mimetype = $tn_mime_detector->getMimetype($tn_file_path);
-      $tn->label = 'Thumbnail';
-      $tn->setContentFromFile($tn_file_path, FALSE);
-      return $tn;
-    }
-    else {
-      $default_tn_path = variable_get('islandora_solution_pack_xml_default_thumbnail_path', '');
-      if (strlen($default_tn_path) && file_exists($default_tn_path)) {
-        $tn_mime_detector = new MimeDetect();
-        $tn = $this->constructDatastream('TN', 'M');
-        $tn->mimetype = $tn_mime_detector->getMimetype($default_tn_path);
-        $tn->label = 'Thumbnail';
-        $tn->setContentFromFile($default_tn_path, FALSE);
-        return $tn;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
    * Creates a MODS datastream.
    *
    * If a file in the same directory as the OBJ file and matching its basename
@@ -150,12 +102,12 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
-    $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . $file_name . '.MODS.xml';
+    $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';
     if (file_exists($mods_file_path)) {
       $mods = $this->constructDatastream('MODS', 'M');
       $mods->mimetype = 'application/xml';
       $mods->label = 'MODS metadata';
-      $mods->setContentFromFile($compound_file_path, FALSE);
+      $mods->setContentFromFile($mods_file_path, FALSE);
       return $mods;
     }
     else {

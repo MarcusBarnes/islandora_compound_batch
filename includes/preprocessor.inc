@@ -37,8 +37,68 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             //$files[] = $filePath;
             $added[]= $batch_object;
         }
+        if($fileExtension == 'cpd'){
+            $this->addCompoundStrcuture($filePath);
+            //echo "BatchSetId:  " .$this->getSetId() . PHP_EOL;
+        }
     }
     
     return $added;
   }
+  
+  /**
+   *  Parses CPD file and adds data to the islandora_compound_batch database table
+   *  
+   */
+   public function addCompoundStrcuture($structure_file_path){
+
+        $batch_id = $this->getSetId();
+        
+        $doc = new DOMDocument();
+        $doc->load($structure_file_path);
+        
+        $wanted_tags = array('node', 'page');
+        foreach ($doc->getElementsByTagName('*') as $node) {
+            if (in_array($node->nodeName, $wanted_tags)) {
+              echo "Node name:\t" . $node->nodeName . "\n";
+              if ($node->nodeName == 'page') {
+                $xpath = new DOMXPath($doc);
+                $pageptrs = $xpath->query('pageptr', $node);
+                $pageptr = $pageptrs->item(0);
+                echo "Page pointer:\t" . $pageptr->nodeValue . "\n";
+              }
+              $path = $node->getNodePath();
+              echo "Path:\t\t$path\n";
+              if ($node->nodeName == 'node') {
+                $xpath = new DOMXPath($doc);
+                $node_titles = $xpath->query('nodetitle', $node);
+                $node_title = $node_titles->item(0);
+                echo "Node title:\t" . $node_title->nodeValue . "\n";
+              }
+              $parentNode = $node->parentNode;
+              echo "Parent path:\t" .  $parentNode->getNodePath(). "\n\n";
+              
+              $insert_result = db_insert('islandora_compound_batch')
+                ->fields(array(
+                   'object_xpath' => $path,
+                   'parent_xpath' => $parentNode,
+                   'title' => $node_title,
+                   //'sequence' =>
+                   //'object_pid'
+                   //'parent_pid'
+                   'batch_id' => $batch_id            
+                ))
+                ->execute();
+                
+               echo "Insert Result: $insert_result" . PHP_EOL;
+            }
+            
+        }
+        
+        
+            
+       
+        
+    }
+  
 }

@@ -27,12 +27,6 @@ function islandora_compound_batch_schema() {
                 'not null' => TRUE,
                 'default' => '',            
             ),
-            'title' => array(
-                'description' => 'Applies to parent nodes only. If the node in the structure file has a title (as it will usually have in CONTENTdm compound objects), record it here for use during the bulk ingest phase.', 
-                'type' => 'varchar',
-                'length' => '255',
-                'defualt' => '',                        
-            ),
             'object_pid' => array(
                 'description' => 'The PID of the child object. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.',
                 'type' => 'int',
