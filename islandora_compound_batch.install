@@ -13,6 +13,20 @@ function islandora_compound_batch_schema() {
         // Specification for the "islandora_compound_batch" table
         'description' => 'Registers data for batch ingest of compound objects.',
         'fields' => array(
+            'id' => array(
+                'description' => 'ID to identify row for convienience in queries.',
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'object_id' => array(
+                'description' => 'ID for grouping child objects of an object. The object ID is the batch set ID concatenated with the object count number in the batch.',
+                'type' => 'int',
+                'size' => 'big',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0,   
+            ),
             'object_xpath' => array(
                 'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
                 'type' => 'varchar',
@@ -50,9 +64,14 @@ function islandora_compound_batch_schema() {
                 'unsigned' => TRUE,
                 'not null' => TRUE,
                 'default' => 0, 
-            ),     
+            ),
+           
                   
-        )             
+        ),
+        'unique keys' => array(
+            'id' => array('id'),
+        ),
+        'primary key' => array('id'),                
     );
     
     return $schema;

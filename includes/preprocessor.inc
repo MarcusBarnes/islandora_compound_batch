@@ -38,8 +38,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             $added[]= $batch_object;
         }
         if($fileExtension == 'cpd'){
-            $this->addCompoundStrcuture($filePath);
-            //echo "BatchSetId:  " .$this->getSetId() . PHP_EOL;
+            $this->addCompoundStrcuture($filePath);            
         }
     }
     
@@ -51,8 +50,16 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    *  
    */
    public function addCompoundStrcuture($structure_file_path){
-
+        static $object_num = 0;
+        
         $batch_id = $this->getSetId();
+        
+        // Object ID is the batch set ID concatenated with the object number.
+        $object_id = $batch_id . $object_num;
+        
+        // Increment 
+        $object_num++;
+        
         
         $doc = new DOMDocument();
         $doc->load($structure_file_path);
@@ -80,9 +87,9 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
               
               $insert_result = db_insert('islandora_compound_batch')
                 ->fields(array(
+                   'object_id' => $object_id,
                    'object_xpath' => $path,
-                   'parent_xpath' => $parentNode,
-                   'title' => $node_title,
+                   'parent_xpath' => $parentNode,                   
                    //'sequence' =>
                    //'object_pid'
                    //'parent_pid'
