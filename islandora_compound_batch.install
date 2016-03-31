@@ -51,11 +51,10 @@ function islandora_compound_batch_schema() {
             ),
             'parent_pid' => array(
                 'description' => "The PID of the child's immediate parent. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.",
-                'type' => 'int',
-                'size' => 'big',
-                'unsigned' => TRUE,
+                'type' => 'varchar',
+                'length' => '255',
                 'not null' => TRUE,
-                'default' => 0, 
+                'default' => '',
             ),
               'batch_id' => array(
                 'description' => "The batch ID for which the object is a part of.",
