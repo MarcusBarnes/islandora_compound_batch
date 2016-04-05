@@ -19,6 +19,14 @@ function islandora_compound_batch_schema() {
                 'unsigned' => TRUE,
                 'not null' => TRUE,
             ),
+            'pageptr' => array(
+                'description' => 'The pointer corresponding to value of the pageptr element in the CPD file.',
+                'type' => 'int',
+                'size' => 'big',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+                'default' => 0,             
+            ),
             'object_id' => array(
                 'description' => 'ID for grouping child objects of an object. The object ID is the batch set ID concatenated with the object count number in the batch.',
                 'type' => 'int',
