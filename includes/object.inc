@@ -27,13 +27,20 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    */
   public function batchProcess() {
     // OBJ datastream.
-    $obj = $this->constructDatastream('OBJ', 'M');
-    $obj->label = 'OBJ Datastream';
-    // must infer mimetype from file.
-    $mime_detector = new MimeDetect();
-    $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
-    $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
-    $this->ingestDatastream($obj);
+    
+
+    $pathinfo = pathinfo($this->compoundObjFilePath);
+    $dir_name = $pathinfo['dirname'];
+    $file_name = $pathinfo['filename'];    
+    if($file_name != 'MODS'){
+        $obj = $this->constructDatastream('OBJ', 'M');
+        $obj->label = 'OBJ Datastream';
+        // must infer mimetype from file.
+        $mime_detector = new MimeDetect();
+        $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
+        $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
+        $this->ingestDatastream($obj);
+    }
     
     // MODS, then from it DC, datastreams.    
     if ($mods = $this->getMods()) {
@@ -65,19 +72,70 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
         $this->label = '[No object label available]';
       }
     }
-
+    
+    
     $this->addRelationships();
+    
+    
+    // check if object is a parent wrapper object (will have it's own mods).
+    // if it is not a parent wrapper object, infer parent from  compoundObjFilePath and
+    // islandora_compound_batch table.
+    // update the relationships accordingly - parent 
+    
+    $parent_pid = $this->inferParent($this->compoundObjFilePath);
+    
+    // Parent objects will return NULL from inferPerent method.
+    if(!is_null($parent_pid)){
+       $this->addChildParentRelationships($parent_pid);
+    }
+    
+    
     
     // Indicate that this object is ready to actually go into Fedora.
     return ISLANDORA_BATCH_STATE__DONE;
   }
+  
+  
+  /**
+   * Determine if this is a child object based on the path and if so, return the parent PID.
+   */
+  private function inferParent($path) {
+  
+    // Assumes that the path to the DSID is ../pointer/dsid.EXT
+    $pointer = basename(dirname($path));
+    //echo $pointer . PHP_EOL;
+        //->condition('pageptr', '%' . db_like($pageptr) . '%', 'LIKE')        
+    $result = db_select('islandora_compound_batch', 'q')
+        ->fields('q', array('parent_pid'))
+        ->condition('q.pageptr', $pointer)
+        ->execute()
+        ->fetchAssoc();
+    
+    return $result['parent_pid'];
+ 
+  }
 
   /**
-   * Add relationships.
+   * Add basic relationships.
    */
   public function addRelationships() {
     $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
+    // ToDo? Set model(s) based on extention to model map?
     $this->models = 'islandora:compoundCmodel';
+  }
+  
+  /** 
+   *  Add parent-child relationships
+   */
+  public function addChildParentRelationships($parent_pid){
+    static $sequenceNumFake = 1;
+    $this->relationships->add(FEDORA_RELS_EXT_URI, 'isConstituentOf', $parent_pid);
+    //$this->relationships->add(FEODRA_RELS_EXT_URI, 'isSequenceNumber', (string) $sequenceNumFake, TRUE);
+    $sequenceNumFake+=1;
+    /*
+    <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
+    <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
+    */
   }
 
   /**
@@ -99,10 +157,16 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    *   was created.
    */
   private function getMods() {
+   
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
-    $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';
+    if($file_name == 'MODS') {
+        $mods_file_path = $this->compoundObjFilePath;
+    } else {
+        $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';    
+    }
+
     if (file_exists($mods_file_path)) {
       $mods = $this->constructDatastream('MODS', 'M');
       $mods->mimetype = 'application/xml';
