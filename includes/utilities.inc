@@ -60,6 +60,10 @@ class Utilies {
     public function extInContentModelMap($ext) {
         return in_array($ext,$this->getObjExtensions());
     }
+    
+    public function getContentModelFromFileExt($fileExt) {
+        return  $this->extensionToContentModelMap[$fileExt];
+    }
 
     /**
      * Applies an XSLT transform to an XML string.
