@@ -74,8 +74,9 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     }
     
     
-    $this->addRelationships();
     
+    // Add common relationship.
+    $this->addRelationships();    
     
     // check if object is a parent wrapper object (will have it's own mods).
     // if it is not a parent wrapper object, infer parent from  compoundObjFilePath and
@@ -86,11 +87,11 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     
     // Parent objects will return NULL from inferPerent method.
     if(!is_null($parent_pid)){
-       $this->addChildParentRelationships($parent_pid);
+       $this->addRelationshipsForChild($parent_pid);
+    } else {
+       $this->addRelationshipsForParent(); 
     }
-    
-    
-    
+
     // Indicate that this object is ready to actually go into Fedora.
     return ISLANDORA_BATCH_STATE__DONE;
   }
@@ -116,22 +117,33 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   }
 
   /**
-   * Add basic relationships.
+   * Add basic relationships common to all objects.
    */
   public function addRelationships() {
     $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
+  }
+  
+   /**
+   * Add basic relationships for parent object.
+   */
+  public function addRelationshipsForParent() {
     // ToDo? Set model(s) based on extention to model map?
-    $this->models = 'islandora:compoundCmodel';
+    // parent objects are compound
+    $this->models = 'islandora:compoundCModel';
   }
   
   /** 
    *  Add parent-child relationships
    */
-  public function addChildParentRelationships($parent_pid){
-    static $sequenceNumFake = 1;
+  public function addRelationshipsForChild($parent_pid){
+    static $n = 0;
+    $n = $n % 2;    
+    $n = $n + 1;
+    echo "FakeSequenceNum: $n" . PHP_EOL;
     $this->relationships->add(FEDORA_RELS_EXT_URI, 'isConstituentOf', $parent_pid);
-    //$this->relationships->add(FEODRA_RELS_EXT_URI, 'isSequenceNumber', (string) $sequenceNumFake, TRUE);
-    $sequenceNumFake+=1;
+    $escaped_pid = str_replace(':', '_', $parent_pid);
+    $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $n, RELS_TYPE_PLAIN_LITERAL);
+    //$this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $n, TRUE);
     /*
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
