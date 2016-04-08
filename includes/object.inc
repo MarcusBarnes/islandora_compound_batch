@@ -41,17 +41,19 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
         $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
         $this->ingestDatastream($obj);
     }
+
+    module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
+    $cbUtilities = new Utilies;
     
     // MODS, then from it DC, datastreams.    
     if ($mods = $this->getMods()) {
       
       $this->ingestDatastream($mods);
 
-      module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
       $path_to_mods_to_dc_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/mods_to_dc.xsl';
       $mods_to_dc_xsl = file_get_contents($path_to_mods_to_dc_xsl);
       // compound batch utilities class   
-      $cbUtilities = new Utilies;
+
       $dc_content = $cbUtilities->apply_xslt($mods_to_dc_xsl, $mods->content);
       $dc = $this->constructDatastream('DC', 'M');
       $dc->mimetype = 'application/xml';
@@ -91,10 +93,14 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // Parent objects will return NULL from inferPerent method.
     if(!is_null($parent_pid)){
        $sequenceNumber = $this->seqNumBasedOnXpath($object_xpath);
-       //echo "Sequence Number for $object_xpath is $sequenceNumber." . PHP_EOL;
-       $this->addRelationshipsForChild($parent_pid, $sequenceNumber);
+       $this->addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model);
+
+       $fileExtension = pathinfo($this->compoundObjFilePath, PATHINFO_EXTENSION);
+       $contentModel = $cbUtilities->getContentModelFromFileExt($fileExtension);
+       $this->models = $contentModel;
     } else {
-       $this->addRelationshipsForParent(); 
+       //$this->addRelationshipsForParent();        
+       $this->models = 'islandora:compoundCModel';
     }
 
     // Indicate that this object is ready to actually go into Fedora.
@@ -167,7 +173,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /** 
    *  Add parent-child relationships
    */
-  public function addRelationshipsForChild($parent_pid, $sequenceNumber){
+  public function addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model){
     /*
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
