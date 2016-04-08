@@ -83,17 +83,30 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // islandora_compound_batch table.
     // update the relationships accordingly - parent 
     
-    $parent_pid = $this->inferParent($this->compoundObjFilePath);
+    //$parent_pid = $this->inferParent($this->compoundObjFilePath);
+    $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath);
+    $parent_pid = $compoundBatchRow['parent_pid'];
+    $object_xpath = $compoundBatchRow['object_xpath'];
     
     // Parent objects will return NULL from inferPerent method.
     if(!is_null($parent_pid)){
-       $this->addRelationshipsForChild($parent_pid);
+       $sequenceNumber = $this->seqNumBasedOnXpath($object_xpath);
+       //echo "Sequence Number for $object_xpath is $sequenceNumber." . PHP_EOL;
+       $this->addRelationshipsForChild($parent_pid, $sequenceNumber);
     } else {
        $this->addRelationshipsForParent(); 
     }
 
     // Indicate that this object is ready to actually go into Fedora.
     return ISLANDORA_BATCH_STATE__DONE;
+  }
+  
+  private function seqNumBasedOnXpath($object_xpath){
+      // Example path for second sequence number cpd/page[2]
+      $pattern = '%\[([0-9]*?)\]%';
+      $result = preg_match($pattern, $object_xpath, $matches);
+      // matches[0] will return square brackets
+      return $matches[1];
   }
   
   
@@ -116,6 +129,25 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
  
   }
 
+
+  /**
+   * Infer the row that contains data for the given file (if any).
+   */
+  private function inferIslandoraCompoundBatchRow($path) {
+  
+    // Assumes that the path to the DSID is ../pointer/dsid.EXT
+    $pointer = basename(dirname($path));
+    $result = db_select('islandora_compound_batch', 'q')
+        ->fields('q')
+        ->condition('q.pageptr', $pointer)
+        ->execute()
+        ->fetchAssoc();
+    
+    return $result;
+ 
+  }
+
+
   /**
    * Add basic relationships common to all objects.
    */
@@ -135,19 +167,15 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /** 
    *  Add parent-child relationships
    */
-  public function addRelationshipsForChild($parent_pid){
-    static $n = 0;
-    $n = $n % 2;    
-    $n = $n + 1;
-    echo "FakeSequenceNum: $n" . PHP_EOL;
-    $this->relationships->add(FEDORA_RELS_EXT_URI, 'isConstituentOf', $parent_pid);
-    $escaped_pid = str_replace(':', '_', $parent_pid);
-    $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $n, RELS_TYPE_PLAIN_LITERAL);
-    //$this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $n, TRUE);
+  public function addRelationshipsForChild($parent_pid, $sequenceNumber){
     /*
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
     */
+    $this->relationships->add(FEDORA_RELS_EXT_URI, 'isConstituentOf', $parent_pid);
+    $escaped_pid = str_replace(':', '_', $parent_pid);
+    $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $sequenceNumber, RELS_TYPE_PLAIN_LITERAL);
+
   }
 
   /**
