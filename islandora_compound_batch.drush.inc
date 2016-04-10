@@ -72,6 +72,7 @@ function drush_islandora_compound_batch_preprocess() {
   // Pass the preprocessor off to run.
   $preprocessor = new IslandoraCompoundBatchPreprocessor($connection, $parameters);
   $preprocessed = islandora_batch_handle_preprocessor($preprocessor);
+  drush_log(t("SetId: @s", array('@s' => $preprocessor->getSetId())), "ok");
 }
 
 /**
