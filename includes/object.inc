@@ -101,6 +101,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     } else {
        //$this->addRelationshipsForParent();        
        $this->models = 'islandora:compoundCModel';
+       $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
     }
 
     // Indicate that this object is ready to actually go into Fedora.
@@ -158,7 +159,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    * Add basic relationships common to all objects.
    */
   public function addRelationships() {
-    $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
+    // $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
   }
   
    /**
