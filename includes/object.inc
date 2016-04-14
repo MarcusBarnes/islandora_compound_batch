@@ -27,7 +27,6 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    */
   public function batchProcess() {
     // OBJ datastream.
-    
 
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
@@ -85,7 +84,6 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // islandora_compound_batch table.
     // update the relationships accordingly - parent 
     
-    //$parent_pid = $this->inferParent($this->compoundObjFilePath);
     $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath);
     $parent_pid = $compoundBatchRow['parent_pid'];
     $object_xpath = $compoundBatchRow['object_xpath'];
@@ -116,27 +114,6 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       return $matches[1];
   }
   
-  
-  /**
-   * Determine if this is a child object based on the path and if so, return the parent PID.
-   */
-  private function inferParent($path) {
-  
-    // Assumes that the path to the DSID is ../pointer/dsid.EXT
-    $pointer = basename(dirname($path));
-    //echo $pointer . PHP_EOL;
-        //->condition('pageptr', '%' . db_like($pageptr) . '%', 'LIKE')        
-    $result = db_select('islandora_compound_batch', 'q')
-        ->fields('q', array('parent_pid'))
-        ->condition('q.pageptr', $pointer)
-        ->execute()
-        ->fetchAssoc();
-    
-    return $result['parent_pid'];
- 
-  }
-
-
   /**
    * Infer the row that contains data for the given file (if any).
    */
