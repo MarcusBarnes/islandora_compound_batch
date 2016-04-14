@@ -28,7 +28,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   public function batchProcess() {
     // OBJ datastream.
     
-    $batchset_id =  $this->preprocessorParameters['set_id'] . PHP_EOL;
+    $batchset_id =  $this->preprocessorParameters['set_id'];
     
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
