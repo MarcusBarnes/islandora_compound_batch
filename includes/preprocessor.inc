@@ -18,6 +18,9 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     $added = array();
         
     $input_path = $this->parameters['target'];
+    // Add batchset_id property for use later in ingest phase in object.inc
+    //$batch_object->batchset_id = $this->getSetId();
+    $this->parameters['set_id'] = $this->getSetId();
     
     $dir = new RecursiveDirectoryIterator($input_path);
     $iterator = new RecursiveIteratorIterator($dir);
@@ -64,6 +67,8 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             //$this->addCompoundStrcuture($filePath);
             
         }
+        
+
     }
     
     return $added;

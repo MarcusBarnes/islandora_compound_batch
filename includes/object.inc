@@ -27,7 +27,9 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    */
   public function batchProcess() {
     // OBJ datastream.
-
+    
+    $batchset_id =  $this->preprocessorParameters['set_id'] . PHP_EOL;
+    
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];    
@@ -84,7 +86,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // islandora_compound_batch table.
     // update the relationships accordingly - parent 
     
-    $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath);
+    $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath, $batchset_id);
     $parent_pid = $compoundBatchRow['parent_pid'];
     $object_xpath = $compoundBatchRow['object_xpath'];
     
@@ -117,13 +119,14 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /**
    * Infer the row that contains data for the given file (if any).
    */
-  private function inferIslandoraCompoundBatchRow($path) {
+  private function inferIslandoraCompoundBatchRow($path, $batchset_id) {
   
     // Assumes that the path to the DSID is ../pointer/dsid.EXT
     $pointer = basename(dirname($path));
     $result = db_select('islandora_compound_batch', 'q')
         ->fields('q')
         ->condition('q.pageptr', $pointer)
+        ->condition('q.batch_id', $batchset_id)
         ->execute()
         ->fetchAssoc();
     
