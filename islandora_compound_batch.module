@@ -5,12 +5,29 @@
  */
 
 /**
+ * Implements hook_CMODEL_PID_islandora_object_ingested().
+ */
+/* 
+function islandora_book_batch_islandora_bookCModel_islandora_object_ingested($object) {
+  if ($object->relationships->get(ISLANDORA_RELS_EXT_URI, 'book-batched', 'true', RELS_TYPE_PLAIN_LITERAL)) {
+    if (module_exists('rules')) {
+      // Allow rules to respond to this event. (To allow configurable messages
+      // for mailing and such).
+      rules_invoke_event('islandora_book_batch_ingested', $object->id);
+    }
+    $object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'book-batched', 'true', RELS_TYPE_PLAIN_LITERAL);
+    $object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'email-admin-when-ingested', 'true', RELS_TYPE_PLAIN_LITERAL);
+  }
+}
+*/
+
+/**
  * Implements hook_menu().
  */
 function islandora_compound_batch_menu() {
   $items = array();
 
-  $items['islandora/object/%islandora_object/manage/compound_batch'] = array(
+  $items['islandora/object/%islandora_object/manage/collection/compound_batch'] = array(
     'title' => 'Compound Batch',
     'access callback' => 'islandora_compound_batch_menu_access',
     'access arguments' => array(2),
@@ -30,5 +47,42 @@ function islandora_compound_batch_menu_access($object) {
   if (!islandora_object_access(ISLANDORA_INGEST, $object)) {
     return FALSE;
   }
-  return in_array('islandora:compoundCModel', $object->models);
+
+  $c = 'COLLECTION_POLICY';
+  if (isset($object[$c]) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $object[$c])) {
+    $cp = new CollectionPolicy($object[$c]->content);
+    
+    return array_key_exists('islandora:compoundCModel', $cp->getContentModels());
+  }
+
+  return FALSE;
 }
+
+/**
+ * Implements hook_islandora_datastream_ingested().
+ *
+ * Gives the parent object the TN of its first child.
+ */
+function islandora_compound_batch_islandora_datastream_ingested(AbstractObject $object, AbstractDatastream $datastream) {
+  $create_thumbs = variable_get('islandora_compound_object_thumbnail_child', TRUE);
+  if ($create_thumbs) {
+    $rels_predicate = variable_get('islandora_compound_object_relationship', 'isConstituentOf');
+    $part_of = $object->relationships->get(FEDORA_RELS_EXT_URI, $rels_predicate);
+    if (isset($part_of[0]['object']['value'])) {
+      $parent_pid = $part_of[0]['object']['value'];
+      $escaped_parent_pid = str_replace(':', '_', $parent_pid);
+      $sequence_numbers = $object->relationships->get(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_parent_pid");
+      if (isset($sequence_numbers[0]['object']['value'])) {
+        $sequence_number = $sequence_numbers[0]['object']['value'];
+        // Use the TN from the first child (i.e., sequence number 1).
+        if ($sequence_number  == '1') {
+          $parent_object = islandora_object_load($parent_pid);
+          if ($datastream->id == 'TN' && !$parent_object['TN']) {
+            islandora_compound_object_update_parent_thumbnail($parent_object);
+          }
+        }
+      }
+    }
+  }
+}
+
