@@ -19,6 +19,7 @@ This module requires the following modules/libraries:
 
 * [Islandora](https://github.com/islandora/islandora)
 * [Tuque](https://github.com/islandora/tuque)
+* [Islandora Batch](https://github.com/Islandora/islandora_batch)
 
 
 # Installation
