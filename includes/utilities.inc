@@ -16,7 +16,7 @@ class Utilies {
      */
     public $extensionToContentModelMap = array();
     
-    public function __construct(){
+    public function __construct() {
         $this->extensionToContentModelMap = array(
                                               'jpeg' => 'islandora:sp_basic_image',
                                               'jpe' => 'islandora:sp_basic_image', 
@@ -49,7 +49,7 @@ class Utilies {
     /**
      * Returns an array of extensions in the Extension to Islandora content model map
      */
-    public function getObjExtensions(){
+    public function getObjExtensions() {
         return array_keys($this->extensionToContentModelMap);        
     }
     
@@ -58,7 +58,7 @@ class Utilies {
      * Returns TRUE if it is and FALSE otherwise.
      */         
     public function extInContentModelMap($ext) {
-        return in_array($ext,$this->getObjExtensions());
+        return in_array($ext, $this->getObjExtensions());
     }
     
     public function getContentModelFromFileExt($fileExt) {
