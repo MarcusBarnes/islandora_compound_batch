@@ -33,7 +33,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];    
-    if($file_name != 'MODS'){
+    if ($file_name != 'MODS') {
         $obj = $this->constructDatastream('OBJ', 'M');
         $obj->label = 'OBJ Datastream';
         // must infer mimetype from file.
@@ -91,14 +91,15 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $object_xpath = $compoundBatchRow['object_xpath'];
     
     // Parent objects will return NULL from inferPerent method.
-    if(!is_null($parent_pid)){
+    if (!is_null($parent_pid)) {
        $sequenceNumber = $this->seqNumBasedOnXpath($object_xpath);
        $this->addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model);
 
        $fileExtension = pathinfo($this->compoundObjFilePath, PATHINFO_EXTENSION);
        $contentModel = $cbUtilities->getContentModelFromFileExt($fileExtension);
        $this->models = $contentModel;
-    } else {
+    } 
+    else {
        //$this->addRelationshipsForParent();        
        $this->models = 'islandora:compoundCModel';
        $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
@@ -108,7 +109,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     return ISLANDORA_BATCH_STATE__DONE;
   }
   
-  private function seqNumBasedOnXpath($object_xpath){
+  private function seqNumBasedOnXpath($object_xpath) {
       // Example path for second sequence number cpd/page[2]
       $pattern = '%\[([0-9]*?)\]%';
       $result = preg_match($pattern, $object_xpath, $matches);
@@ -154,7 +155,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /** 
    *  Add parent-child relationships
    */
-  public function addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model){
+  public function addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model) {
     /*
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
@@ -188,9 +189,10 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
-    if($file_name == 'MODS') {
+    if ($file_name == 'MODS') {
         $mods_file_path = $this->compoundObjFilePath;
-    } else {
+    } 
+    else {
         $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';    
     }
 
