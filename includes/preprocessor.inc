@@ -29,11 +29,11 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     $cbUtilities = new Utilies;
     
     $files = array();
-    foreach($iterator as $fileinfo) {
+    foreach ($iterator as $fileinfo) {
         $filePath = $fileinfo->getPathname();
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
         $isObjFile = $cbUtilities->extInContentModelMap($fileExtension);
-        if($fileinfo->isFile() && $isObjFile){
+        if ($fileinfo->isFile() && $isObjFile) {
             $batch_object = new IslandoraCompoundBatchObject($this->connection, $filePath, $this->parameters);
             //print_r($batch_object);
             //echo PHP_EOL;
@@ -42,7 +42,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             //$files[] = $filePath;
             $added[]= $batch_object;
         }
-        if($fileExtension == 'cpd'){
+        if ($fileExtension == 'cpd') {
             
             // The structure file will be in the root directory of the compound object.
             // We need to create a parent wrapper object to associate the OBJ child objects too.
@@ -78,7 +78,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    *  Parses CPD file and adds data to the islandora_compound_batch database table
    *  
    */
-   public function addCompoundStrcuture($structure_file_path ,$compound_object_pid){
+   public function addCompoundStrcuture($structure_file_path, $compound_object_pid) {
         static $object_num = 0;
         
         $batch_id = $this->getSetId();
@@ -113,7 +113,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
                 echo "Node title:\t" . $node_title->nodeValue . "\n";
               }
               $parentNode = $node->parentNode;
-              echo "Parent path:\t" .  $parentNode->getNodePath(). "\n\n";
+              echo "Parent path:\t" . $parentNode->getNodePath() . "\n\n";
               
               $insert_result = db_insert('islandora_compound_batch')
                 ->fields(array(
