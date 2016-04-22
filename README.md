@@ -33,7 +33,7 @@ N/A
 
 The base directory preprocessor can be called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
-`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/directory/ --namespace=mynamespace --parent=namespace:some_compound_object`
+`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/directory/ --namespace=mynamespace --parent=namespace:some_collection`
 
 This will populate the queue (stored in the Drupal database) with base entries.
 
