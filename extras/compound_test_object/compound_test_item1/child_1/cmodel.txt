@@ -1,1 +1,0 @@
-islandora:sp_basic_image

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<mods xmlns="http://www.loc.gov/mods/v3" xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <titleInfo>
+    <title>MSC130-0017-01</title>
+  </titleInfo>
+  <name>
+    <namePart/>
+    <role>
+      <roleTerm type="text" authority="marcrelator">photographer</roleTerm>
+      <roleTerm type="code" authority="marcrelator">pht</roleTerm>
+    </role>
+  </name>
+  <language>
+    <languageTerm type="text"/>
+    <languageTerm type="code" authority="iso639-2b"/>
+  </language>
+  <genre authority="lcsh">Illustrated works</genre>
+  <identifier type="local"/>
+  <physicalDescription>
+    <extent/>
+  </physicalDescription>
+  <abstract/>
+  <note/>
+  <note/>
+  <accessCondition type="use and reproduction">Images from the British Columbia Postcards Collection have been made available by Simon Fraser University Library   under a Creative Commons attribution, non-commercial license at http://creativecommons.org/licenses/by-nc/3.0/. A   full legal outline of the license can be viewed at: http://creativecommons.org/licenses/by-nc/3.0/legalcode &lt;BR&gt;&lt;BR&gt;We encourage the appropriate open use of images from this collection for educational and other not-for-profit   purposes. Attribution/citation should be provided as follows:  Image [insert image number here, eg. MSC130-2144-01]   courtesy of the British Columbia Postcards Collection, a digital initiative of Simon Fraser University Library.   [Please include the website url when images are used in an offline or print-based context]. &lt;BR&gt;&lt;BR&gt;Parties interested in using high-resolution versions of the images from the British Columbia Postcards   Collection for commercial purposes should contact Special Collections and Rare Books, SFU Library.</accessCondition>
+  <note/>
+  <note/>
+  <note/>
+  <typeOfResource>still image</typeOfResource>
+  <identifier type="uuid">6bad4d09-3802-4c3f-986d-81ba12c4e0f9</identifier>
+  <originInfo>
+    <publisher/>
+    <publisher/>
+    <dateIssued encoding="w3cdtf"/>
+    <dateIssued encoding="w3cdtf" keyDate="yes"/>
+    <dateOther encoding="w3cdtf"/>
+  </originInfo>
+  <subject authority="lcsh">
+    <topic/>
+  </subject>
+  <subject>
+    <geographic/>
+    <cartographics>
+      <coordinates/>
+    </cartographics>
+  </subject>
+</mods>
