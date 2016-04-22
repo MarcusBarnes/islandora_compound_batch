@@ -15,7 +15,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /**
    * Constructor.
    */
-  public function __construct(IslandoraTuque $connection, string $compound_file_path, $batch_parameters) {
+  public function __construct(IslandoraTuque $connection, $compound_file_path, $batch_parameters) {
     parent::__construct(NULL, $connection->repository);
 
     $this->compoundObjFilePath = $compound_file_path;
