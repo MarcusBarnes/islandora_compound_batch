@@ -119,7 +119,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
                 ->fields(array(
                    'object_id' => $object_id,
                    'object_xpath' => $path,
-                   'parent_xpath' => $parentNode,                   
+                   'parent_xpath' => $parentNode->nodeValue,
                    'pageptr' => $pageptrValue,
                    'parent_pid' => $compound_object_pid,
                    'batch_id' => $batch_id            
