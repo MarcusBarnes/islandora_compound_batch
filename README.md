@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This module extends the Islandora batch framework so as to provide a Drush and
-GUI option to add compound items.
+This module extends the Islandora batch framework so as to provide a Drush option to add compound items.
 
 The ingest is a two-step process:
 
@@ -32,76 +31,25 @@ N/A
 
 ### Usage
 
-The base ZIP/directory preprocessor can be called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
+The base directory preprocessor can be called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
-`drush -v --user=admin --uri=http://localhost islandora_compound_batch_preprocess --type=zip --target=/path/to/archive.zip --namespace=mynamespace --parent=namespace:some_compound_object`
+`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/directory/ --namespace=mynamespace --parent=namespace:some_compound_object`
 
 This will populate the queue (stored in the Drupal database) with base entries.
 
-Islandora compound objects can contain child objects of any content model, including compound. 
-For example, a compound object can have children that are images, PDF files, movies, or other compound objects. 
-Given this flexibility, the compound object batch module provides a way for content managers to prepare their content so that it can be loaded into desired structures.
-directory tree starting at ‘folder_containing_content’ contains two compound objects, each with several child objects:
-
-
-* folder_containing_content
-    *compound object_1
-		* MODS.xml
-        * child_1
-        	* cmodel.txt
-            * MODS.xml
-            * OBJ.tif
-        * child 2
-            * MODS.xml
-            * OBJ.mp4
-        * child 3
-            * MODS.xml
-            * child 3a
-                * MODS.xml
-                * OJB.tif
-            *child 3b
-                *MODS.xml
-                *OBJ.tif
-        * child 4
-            * MODS.xml
-            * OBJ.tif
-    * compound object 2
-        * MODS.xml
-        * child 1
-            * MODS.xml
-            * OBJ.tiff
-        [etc.]
-
-Files are assigned to object datastreams based on their basename.  
-Other files, with base names corresponding to datastream IDs, can be included in each page subfolder, such as JP2.jp2, OCR.txt, and TN.jpg. 
-If files like these are included, they will be used as the content of their respective datastreams, and the batch process will not recreate the datastreams.
-
-A file named --METADATA--.xml can contain either MODS, DC or MARCXML which is used to fill in the MODS or DC streams (if not provided explicitly). Similarly, --METADATA--.mrc (containing binary MARC) will be transformed to MODS and then possibly to DC, if neither are provided explicitly.
-
-If no MODS is provided at the compound_object level - either directly as MODS.xml, or transformed from either a DC.xml or the "--METADATA--" file discussed above - the directory name will be used as the title.
-
 The queue of preprocessed items can then be processed:
 
-`drush -v --user=admin --uri=http://localhost islandora_batch_ingest`
+`drush -v --user=admin islandora_batch_ingest`
 
 ## Troubleshooting/Issues
 
-Having problems or solved a problem? Check out the Islandora google groups for a solution.
-
-* [Islandora Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora)
-* [Islandora Dev Group](https://groups.google.com/forum/?hl=en&fromgroups#!forum/islandora-dev)
-
 ## Maintainers/Sponsors
-
-* [discoverygarden](https://github.com/discoverygarden)
 
 This project has been sponsored by:
 
 * [Simon Fraser University Library](http://www.lib.sfu.ca/)
 
 ## Development
-
-If you would like to contribute to this module, please check out our helpful [Documentation for Developers](https://github.com/Islandora/islandora/wiki#wiki-documentation-for-developers) info, as well as our [Developers](http://islandora.ca/developers) section on the Islandora.ca site.
 
 ## License
 
