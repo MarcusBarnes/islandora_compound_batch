@@ -114,12 +114,12 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
               }
               $parentNode = $node->parentNode;
               echo "Parent path:\t" . $parentNode->getNodePath() . "\n\n";
-              
+              $parentNode = trim($parentNode->getNodePath());
               $insert_result = db_insert('islandora_compound_batch')
                 ->fields(array(
                    'object_id' => $object_id,
                    'object_xpath' => $path,
-                   'parent_xpath' => $parentNode->nodeValue,
+                   'parent_xpath' => $parentNode,                   
                    'pageptr' => $pageptrValue,
                    'parent_pid' => $compound_object_pid,
                    'batch_id' => $batch_id            

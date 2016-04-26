@@ -37,17 +37,15 @@ function islandora_compound_batch_schema() {
             ),
             'object_xpath' => array(
                 'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
-                'type' => 'varchar',
-                'length' => '255',
-                'not null' => TRUE,
-                'default' => '',                
+                'type' => 'text',
+                'size' => 'normal',
+                'not null' => TRUE,             
             ), 
             'parent_xpath' => array(
                 'description' => "XPath of the child object's immediate parent. Populated during the batch preprocess phase.",
-                'type' => 'varchar',
-                'length' => '255',
-                'not null' => TRUE,
-                'default' => '',            
+                'type' => 'text',
+                'size' => 'normal',
+                'not null' => TRUE,          
             ),
             'object_pid' => array(
                 'description' => 'The PID of the child object. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.',
@@ -80,22 +78,4 @@ function islandora_compound_batch_schema() {
     );
     
     return $schema;
-}
-
-function islandora_compound_batch_update_7000() {
-  $new_parent_xpath = array(
-    'description' => "XPath of the child object's immediate parent. Populated during the batch preprocess phase.",
-    'type' => 'text',
-    'size' => 'normal',
-    'not null' => TRUE,
-  );
-  db_change_field('islandora_compound_batch', 'parent_xpath', 'parent_xpath', $new_parent_xpath);
-
-  $new_object_xpath = array(
-    'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
-    'type' => 'text',
-    'size' => 'normal',
-    'not null' => TRUE,
-  );
-  db_change_field('islandora_compound_batch', 'object_xpath', 'object_xpath', $new_object_xpath);
 }
