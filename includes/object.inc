@@ -93,7 +93,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // Parent objects will return NULL from inferPerent method.
     if (!is_null($parent_pid)) {
        $sequenceNumber = $this->seqNumBasedOnXpath($object_xpath);
-       $this->addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model);
+       $this->addRelationshipsForChild($parent_pid, $sequenceNumber);
 
        $fileExtension = pathinfo($this->compoundObjFilePath, PATHINFO_EXTENSION);
        $contentModel = $cbUtilities->getContentModelFromFileExt($fileExtension);
@@ -155,7 +155,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   /** 
    *  Add parent-child relationships
    */
-  public function addRelationshipsForChild($parent_pid, $sequenceNumber, $content_model) {
+  public function addRelationshipsForChild($parent_pid, $sequenceNumber) {
     /*
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
