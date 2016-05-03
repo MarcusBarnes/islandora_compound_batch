@@ -110,11 +110,19 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   }
   
   private function seqNumBasedOnXpath($object_xpath) {
+  
+      
       // Example path for second sequence number cpd/page[2]
       $pattern = '%\[([0-9]*?)\]%';
       $result = preg_match($pattern, $object_xpath, $matches);
       // matches[0] will return square brackets
-      return $matches[1];
+      if ($result == 0){
+        //cpd/page will occur based on preprocessor code for compound object with one child.
+        // requires sequence number 1 for thumbnails to appear for parent object
+        return 1;
+      } else {      
+        return $matches[1];
+      }
   }
   
   /**
