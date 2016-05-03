@@ -116,11 +116,12 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $pattern = '%\[([0-9]*?)\]%';
       $result = preg_match($pattern, $object_xpath, $matches);
       // matches[0] will return square brackets
-      if ($result == 0){
+      if ($result == 0) {
         //cpd/page will occur based on preprocessor code for compound object with one child.
         // requires sequence number 1 for thumbnails to appear for parent object
         return 1;
-      } else {      
+      } 
+      else {      
         return $matches[1];
       }
   }
