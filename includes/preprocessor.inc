@@ -9,14 +9,21 @@
  * Batch preprocessor class.
  */
 class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
+  // prefixed flag for outputing echo or print statements  
+  protected $icbp_verbose = false;
   /**
    * Function to get the OBJ XML files from the input directory.
    */
   public function preprocess() {
+    
+    if (strtolower($this->parameters['icbp_verbose']) == 'true') {
+        $this->icbp_verbose = true;
+    }     
+    
     //$input_path = $this->parameters['target'] . DIRECTORY_SEPARATOR . '*.xml';
     // Accumulate a list of the objects added to the queue.
     $added = array();
-        
+                
     $input_path = $this->parameters['target'];
     // Add batchset_id property for use later in ingest phase in object.inc
     //$batch_object->batchset_id = $this->getSetId();
@@ -75,6 +82,15 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
   }
   
   /**
+   * Echos statement if icbp_verbose property is true (set using --icbp_verbose drush option)
+   */
+  public function icbpecho($string) {
+     if ($this->icbp_verbose == true){
+        echo $string;  
+     }
+  }  
+  
+  /**
    *  Parses CPD file and adds data to the islandora_compound_batch database table
    *  
    */
@@ -96,24 +112,24 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
         $wanted_tags = array('node', 'page');
         foreach ($doc->getElementsByTagName('*') as $node) {
             if (in_array($node->nodeName, $wanted_tags)) {
-              echo "Node name:\t" . $node->nodeName . "\n";
+              $this->icbpecho("Node name:\t" . $node->nodeName . "\n");
               if ($node->nodeName == 'page') {
                 $xpath = new DOMXPath($doc);
                 $pageptrs = $xpath->query('pageptr', $node);
                 $pageptr = $pageptrs->item(0);
-                echo "Page pointer:\t" . $pageptr->nodeValue . "\n";
+                $this->icbpecho("Page pointer:\t" . $pageptr->nodeValue . "\n");
                 $pageptrValue = $pageptr->nodeValue;
               }
               $path = $node->getNodePath();
-              echo "Path:\t\t$path\n";
+              $this->icbpecho("Path:\t\t$path\n");
               if ($node->nodeName == 'node') {
                 $xpath = new DOMXPath($doc);
                 $node_titles = $xpath->query('nodetitle', $node);
                 $node_title = $node_titles->item(0);
-                echo "Node title:\t" . $node_title->nodeValue . "\n";
+                $this->icbpecho("Node title:\t" . $node_title->nodeValue . "\n");
               }
               $parentNode = $node->parentNode;
-              echo "Parent path:\t" . $parentNode->getNodePath() . "\n\n";
+              $this->icbpecho("Parent path:\t" . $parentNode->getNodePath() . "\n\n");
               $parentNode = trim($parentNode->getNodePath());
               $insert_result = db_insert('islandora_compound_batch')
                 ->fields(array(
@@ -126,7 +142,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
                 ))
                 ->execute();
                 
-               echo "Insert Result: $insert_result" . PHP_EOL;
+               $this->icbpecho("Insert Result: $insert_result" . PHP_EOL);
             }
             
         }       

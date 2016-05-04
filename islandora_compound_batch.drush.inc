@@ -35,6 +35,10 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The collection to which the generated items should be added.  If "directory" and the directory containing the object description is a valid PID, it will be set as the parent. If this is specified and itself is a PID, all compound objects will be related to the given PID.',
         'required' => TRUE,
       ),
+      'icbp_verbose' => array(
+        'description' => 'Prints out additional information to the console if set to TRUE.',
+        'value' => 'optional',
+      ),
       'parent_relationship_uri' => array(
         'description' => 'The namespace URI of the relationship to the parent. Defaults to "info:fedora/fedora-system:def/relations-external#".',
         'value' => 'optional',
@@ -43,6 +47,7 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The predicate of the relationship to the parent. Defaults to "isMemberOf".',
         'value' => 'optional',
       ),
+      
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
@@ -65,8 +70,9 @@ function drush_islandora_compound_batch_preprocess() {
     'namespace' => drush_get_option('namespace'),
     'target' => drush_get_option('target'),
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
+    'icbp_verbose' => drush_get_option('icbp_verbose'),
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
-    'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
+    'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),    
   );
    
   // Pass the preprocessor off to run.
