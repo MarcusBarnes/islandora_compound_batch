@@ -103,5 +103,51 @@ class Utilies {
         );
       }
     }
+    
+    /** 
+     * Recursively create XML string of directory structure/
+     * Based on psuedo-code from http://stackoverflow.com/a/15096721/850828 
+     */
+    private function directoryXML($directory_path) {
+    
+        //  basenames to exclude.
+        $exclude_array = array('..', '.DS_Store', 'Thumbs.db', '.');
+    
+        $dir_name = basename($directory_path);
+        $xml = "<directory name='" . $dir_name . "'>";
+    
+        $pathbase = pathinfo($directory_path, PATHINFO_BASENAME);
+
+        $stuffindirectory = scandir($directory_path);
+    
+        foreach ($stuffindirectory as $subdirOrfile) {
+        
+            $subdirOrfilepath = $directory_path . DIRECTORY_SEPARATOR . $subdirOrfile;
+        
+            if (!in_array($subdirOrfile, $exclude_array) && is_file($subdirOrfilepath)) {
+              $xml .= "<file name='" . $subdirOrfile . "' />";        
+            }
+    
+            if (!in_array($subdirOrfile, $exclude_array) && is_dir($subdirOrfilepath)) {
+                $xml .= directoryXML($subdirOrfilepath);        
+            }
+        
+        }
+
+        $xml .= "</directory>";
+
+        return $xml;
+    }
+    
+    public function createStructureFile($target_directory) {
+        $xmlstring = "<tree>";
+        $xmlstring .= $this->directoryXML($target_directory);
+        $xmlstring .= "</tree>";
+        $xml = new DOMDocument( "1.0");
+        $xml->loadXML($xmlstring);
+        $xml->formatOutput = TRUE;
+        echo $xml->saveXML();        
+    }
+
 
 }
