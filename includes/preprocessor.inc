@@ -10,14 +10,14 @@
  */
 class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
   // prefixed flag for outputing echo or print statements  
-  protected $icbp_verbose = false;
+  protected $icbp_verbose = FALSE;
   /**
    * Function to get the OBJ XML files from the input directory.
    */
   public function preprocess() {
     
     if (strtolower($this->parameters['icbp_verbose']) == 'true') {
-        $this->icbp_verbose = true;
+        $this->icbp_verbose = TRUE;
     }     
     
     //$input_path = $this->parameters['target'] . DIRECTORY_SEPARATOR . '*.xml';
@@ -85,7 +85,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    * Echos statement if icbp_verbose property is true (set using --icbp_verbose drush option)
    */
   public function icbpecho($string) {
-     if ($this->icbp_verbose == true){
+     if ($this->icbp_verbose == TRUE) {
         echo $string;  
      }
   }  
