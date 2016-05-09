@@ -139,14 +139,14 @@ class Utilies {
         return $xml;
     }
     
-    public function createStructureFile($target_directory) {
+    public function createStructureXML($target_directory) {
         $xmlstring = "<tree>";
         $xmlstring .= $this->directoryXML($target_directory);
         $xmlstring .= "</tree>";
         $xml = new DOMDocument( "1.0");
         $xml->loadXML($xmlstring);
         $xml->formatOutput = TRUE;
-        echo $xml->saveXML();        
+        return $xml->saveXML();        
     }
 
 
