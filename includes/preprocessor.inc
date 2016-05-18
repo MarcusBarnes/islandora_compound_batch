@@ -39,6 +39,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     foreach ($iterator as $fileinfo) {
         $filePath = $fileinfo->getPathname();
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+        $fileNameWithExtension = basename($filePath);
         $isObjFile = $cbUtilities->extInContentModelMap($fileExtension);
         if ($fileinfo->isFile() && $isObjFile) {
             $batch_object = new IslandoraCompoundBatchObject($this->connection, $filePath, $this->parameters);
@@ -49,8 +50,8 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             //$files[] = $filePath;
             $added[]= $batch_object;
         }
-        if ($fileExtension == 'cpd') {
-            
+        if ($fileNameWithExtension == 'structure.xml' /*$fileExtension == 'cpd'*/) {
+                    
             // The structure file will be in the root directory of the compound object.
             // We need to create a parent wrapper object to associate the OBJ child objects too.
             // Along with the structure file in the root directory of the compound object
@@ -70,9 +71,9 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             $compound_object_pid = $this->addToDatabase($batch_object);
             //echo "Return Value: $returnvalue" . PHP_EOL;
 
-            $this->addCompoundStrcuture($filePath, $compound_object_pid);
+            //$this->addCompoundStrcuture($filePath, $compound_object_pid);
             //$this->addCompoundStrcuture($filePath);
-            
+            $this->addStrcutureData($filePath, $compound_object_pid);
         }
         
 
@@ -148,5 +149,68 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
         }       
         
     } // End of addCompoundStrcuture
+    
+    
+   /**
+   *  Parses structure.xml file and adds data to the islandora_compound_batch database table
+   *  
+   */
+   public function addStrcutureData($structure_file_path, $compound_object_pid) {
+        static $object_num = 0;
+        
+        $batch_id = $this->getSetId();
+        
+        // Object ID is the batch set ID concatenated with the object number.
+        $object_id = $batch_id . $object_num;
+        
+        // Increment 
+        $object_num++;
+        
+        
+        $doc = new DOMDocument();
+        $doc->load($structure_file_path);
+        
+        /*
+            <islandora_compound_object title="895">
+                  <child content="893"/>
+                  <child content="894"/>
+            </islandora_compound_object>
+        */
+        
+        $wanted_tags = array('child');
+        foreach ($doc->getElementsByTagName('*') as $node) {
+            if (in_array($node->nodeName, $wanted_tags)) {
+                $this->icbpecho("Node name:\t" . $node->nodeName . "\n");
+                if ($node->nodeName == 'child') {
+                    $xpath = new DOMXPath($doc);
+                    $pointers = $xpath->query('@content', $node);
+                    //var_dump($pointers);
+                    $pointer = $pointers->item(0);
+                    $this->icbpecho("Page pointer:\t" . $pointer->nodeValue . "\n");
+                    $pointerValue = $pointer->nodeValue;
+                }
+                $path = $node->getNodePath();
+                $this->icbpecho("Path:\t\t$path\n");
+                
+                $parentNode = $node->parentNode;
+                $this->icbpecho("Parent path:\t" . $parentNode->getNodePath() . "\n\n");
+              
+                $parentNode = trim($parentNode->getNodePath());
+                $insert_result = db_insert('islandora_compound_batch')
+                    ->fields(array(
+                        'object_id' => $object_id,
+                        'object_xpath' => $path,
+                        'parent_xpath' => $parentNode,                   
+                        'pageptr' => $pointerValue,
+                        'parent_pid' => $compound_object_pid,
+                        'batch_id' => $batch_id            
+               ))->execute();
+                
+              $this->icbpecho("Insert Result: $insert_result" . PHP_EOL);
+            }
+            
+        }       
+        
+    } // End of addStrcutureData
   
 }
