@@ -25,7 +25,7 @@ if(!is_dir($target_directory)){
     exit("Please check that you have provided a full path to a directory as the input argument." . PHP_EOL);
 }
 
-$path_to_xsl =  "/Users/mbarnes/dev/islandora_compound_batch/extras/scripts/tree_to_compound_object.xsl";
+$path_to_xsl =  "tree_to_compound_object.xsl";
 
 scanWrapperDirectory($target_directory, 'structure', $path_to_xsl);
 
