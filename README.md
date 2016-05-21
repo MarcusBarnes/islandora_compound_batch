@@ -6,11 +6,11 @@ This module extends the Islandora batch framework so as to provide a Drush optio
 
 The ingest is a three-step process:
 
-* Generating a structure file for each compound object.
-* Islandora Batch preprocessing: The data is scanned and a number of entries are created in the Drupal database.  There is minimal processing done at this point, so preprocessing can be completed outside of a batch process.
-* Islandora Batch ingest: The data is actually processed and ingested. This happens inside of a Drupal batch.
+1. Generating a structure file for each compound object.
+2. Batch preprocessing
+3. Batch ingest
 
-The first step is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules.
+The first step is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules. Details on each step are provided below.
 
 ## Requirements
 
@@ -92,7 +92,11 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 </islandora_compound_object>
 ```
 
+The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.
+
 #### Ingesting your prepared content into Islandora
+
+After you have prepared your content, the remaining steps are much like those required by other Islandora Batch drush scripts.
 
 The batch preprocessor is called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
