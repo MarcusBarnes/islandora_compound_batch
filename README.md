@@ -81,18 +81,13 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<!--Islandora compound structure file used by the Compound Batch module. On batch ingest,
-    'islandora_compound_object' elements become compound objects, and 'child' elements become their
-    children. Files in directories named in child elements' 'content' attribute will be added as their
-    datastreams. If 'islandora_compound_object' elements do not contain a MODS.xml file, the value of
-    the 'title' attribute will be used as the parent's title/label.-->
 <islandora_compound_object title="parent_one">
   <child content="first_child"/>
   <child content="second_child"/>
 </islandora_compound_object>
 ```
 
-The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.
+Each structure file contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted here for brevity). The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.
 
 #### Ingesting your prepared content into Islandora
 
@@ -108,6 +103,38 @@ The queue of preprocessed items is then processed by running the ingest command:
 
 `drush -v --user=admin islandora_batch_ingest`
 
+## OBJ extension to content model mappings
+
+This module determines which content model to assign to child objects based on the extension of the OBJ file. The mapping used in this assignment is:
+
+```
+jpeg => islandora:sp_basic_image
+jpe => islandora:sp_basic_image
+jpeg => islandora:sp_basic_image
+gif => islandora:sp_basic_image
+png => islandora:sp_basic_image
+tif => islandora:sp_large_image_cmodel
+tiff => islandora:sp_large_image_cmodel
+jp2 => islandora:sp_large_image_cmodel
+pdf => islandora:sp_pdf
+mp3 => islandora:sp-audioCModel
+mp4a => islandora:sp-audioCModel
+m4a => islandora:sp-audioCModel
+oga => islandora:sp-audioCModel
+ogg => islandora:sp-audioCModel
+flac => islandora:sp-audioCModel
+wav => islandora:sp-audioCModel
+mp4 => islandora:sp_videoCModel
+m4v  => islandora:sp_videoCModel
+mkv  => islandora:sp_videoCModel
+mpeg => islandora:sp_videoCModel
+mpe => islandora:sp_videoCModel
+mpg => islandora:sp_videoCModel
+qt => islandora:sp_videoCModel
+mov => islandora:sp_videoCModel
+ogv => islandora:sp_videoCModel
+```
+
 ## Troubleshooting/Issues
 
 Please open an issue in this Github repo's issue queue.
@@ -115,6 +142,12 @@ Please open an issue in this Github repo's issue queue.
 ## Maintainers/Sponsors
 
 * [Simon Fraser University Library](http://www.lib.sfu.ca/)
+
+## To do
+
+* Add support for hierarchical compound objects (i.e., with children that have children)
+* Graphical user interface
+* A way to allow overriding the extenstion to content model mapping
 
 ## Development
 
