@@ -1,21 +1,25 @@
 <?php
 /**
- * Adds strucutre file to root of compound ojects.
+ * Helper script for Islandora Compound Batch that generates a "structure file"
+ * for each compound oject arranged under a root directory:
+ *
  * path_to_directory_containing_compound_objects\
  *    compound_object_1\
+ *      child_1\
+ *      child_2\
  *    compound_object_2\
+ *      child_1\
+ *      child_2\
+ *      child_3\
  *    compound_object_3\
- *    .
- *    .
- *    .
- *
+ *    [...] 
+ * 
+ * This script must be run to prepare compound objects for ingesting using
+ * Islandora Compound Batch.
  *
  * Usage:
  *
  * > php create_strcutre_files.php path_to_directory_containing_compound_objects 
- * 
- *
- *
  */ 
 
 
@@ -26,14 +30,22 @@ if(!is_dir($target_directory)){
 }
 
 $path_to_xsl =  "tree_to_compound_object.xsl";
+if(!file_exists($path_to_xsl)){
+    exit("Cannot find the required XSLT file ($path_to_xsl)." . PHP_EOL);
+}
 
 scanWrapperDirectory($target_directory, 'structure', $path_to_xsl);
 
 // For use with use with get_dir_name(), which is used inside XSLT.
 $compound_obj_path = '';
 
+/**
+ * Recursively scans the target directory, generates the equivalent of the 'tree' command
+ * for each subdirectory, and transforms the resulting XML into an Islandora structure
+ * file for each.
+ */
 function scanWrapperDirectory($target_directory, $structurefilename = 'structure', $path_to_xsl) {
-    //  basenames to exclude.
+    // Filenames to exclude.
     $exclude_array = array('..', '.DS_Store', 'Thumbs.db', '.');
 
     $stuffinwrapperdirectory = scandir($target_directory);
@@ -46,21 +58,16 @@ function scanWrapperDirectory($target_directory, $structurefilename = 'structure
            // create a structure file for each.
            $structure_xml = compoundObjectStructureXML($objpath);
 
-           // Apply XSLT
+           // Apply XSLT.
            $structure_xml = treeToCompound($path_to_xsl, $structure_xml);
            $structure_xml_output_file_path = $objpath . DIRECTORY_SEPARATOR 
                                             . $structurefilename . '.xml';
            file_put_contents($structure_xml_output_file_path, $structure_xml);
-           
         }
-        
     }
 }
 
-
 function treeToCompound($path_to_xsl, $tree_output_xml) {
-    // Usage: php tree_to_compound.php tree_to_compound_object.xsl tree_output.xml
-
     $xsl = $path_to_xsl;
     // tree_output_xml is an xml string.
     $xml = $tree_output_xml;
@@ -99,13 +106,11 @@ function get_dir_name() {
     return $dir_path;
 }
 
-
 /** 
- * Recursively create XML string of directory structure/
+ * Recursively create XML string of directory/tree structure.
  * Based on psuedo-code from http://stackoverflow.com/a/15096721/850828 
  */
 function directoryXML($directory_path) {
-    
     //  basenames to exclude.
     $exclude_array = array('..', '.DS_Store', 'Thumbs.db', '.');
     
@@ -116,18 +121,13 @@ function directoryXML($directory_path) {
     $stuffindirectory = scandir($directory_path);
     
     foreach($stuffindirectory as $subdirOrfile){
-        
         $subdirOrfilepath = $directory_path . DIRECTORY_SEPARATOR  . $subdirOrfile;
-        
         if(!in_array($subdirOrfile, $exclude_array) && is_file($subdirOrfilepath)){
           $xml .= "<file name='". $subdirOrfile . "' />";
-        
         }
-    
         if(!in_array($subdirOrfile, $exclude_array) && is_dir($subdirOrfilepath)){
             $xml .= directoryXML($subdirOrfilepath);        
         }
-        
     }
     $xml .= "</directory>";
     return $xml;
