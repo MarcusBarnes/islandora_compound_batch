@@ -2,15 +2,30 @@
 
 ## Introduction
 
-This module extends the Islandora batch framework so as to provide a Drush option to add compound items. Currently, only compound items that have a "flat" structure are supported.
+This module extends the Islandora batch framework to provide a Drush option to ingest compound objects. Currently, only compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
 
-The ingest is a three-step process:
+```
+batch_directory/
+├── compound_object_1
+│   ├── child_1
+│   └── child_2
+├── compound_object_2
+│   ├── child_1
+│   └── child_2
+└── compound_object_3
+    ├── child_1
+    └── child_2
+```
 
-1. Generating a structure file for each compound object.
-2. Batch preprocessing
-3. Batch ingest
 
-The first step is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules. Details on each step are provided below.
+The ingest is a four-step process:
+
+1. Arranging your objects in a directory structure like the one depicted above
+2. Generating a structure file for each compound object
+3. Batch preprocessing
+4. Batch ingest
+
+Step 2, generating structure files, is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules. Details on each step are provided below.
 
 ## Requirements
 
@@ -29,7 +44,7 @@ There are no configuration options for this module.
 
 ### Usage
 
-#### Arranging your content and generating structure files
+#### Step 1: Arranging your content and generating structure files
 
 To prepare your compound objects, arrange them in a directory structure so that each parent object is in its own directory beneath the input directory, and within each parent object, each child object is in its own subdirectory. Each parent should contain a MODS.xml file, which is a sibling to the child object directories. Each child object directory should contain a MODS.xml file and must contain a file corresponding to the OBJ datastream. This file must be named OBJ and use an extension that will determine the content model to use for the child object. A sample input directory is:
 
@@ -53,7 +68,9 @@ input_directory
     └── MODS.xml
 ```
 
-Once you have your content arranged in this way, you will need to generate a 'structure file' for your objects. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path_to_directory_containing_compound_objects`. Running this script will add a `structure.xml` file to each parent object:
+#### Step 2: Generating structure files
+
+Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path_to_directory_containing_compound_objects`. Running this script will add a `structure.xml` file to each parent object:
 
 ```
 input_directory
@@ -89,7 +106,7 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 
 Each structure file contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted here for brevity). The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.
 
-#### Ingesting your prepared content into Islandora
+#### Steps 3 and 4: Ingesting your prepared content into Islandora
 
 After you have prepared your content, the remaining steps are much like those required by other Islandora Batch drush scripts.
 
