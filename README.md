@@ -112,7 +112,7 @@ After you have prepared your content, the remaining steps are much like those re
 
 The batch preprocessor is called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
-`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection
+`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
 
 This will populate the queue (stored in the Drupal database) with base entries.
 
