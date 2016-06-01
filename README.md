@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This module extends the Islandora batch framework to provide a Drush option to ingest compound objects. Currently, only compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
+This module extends the Islandora batch framework to provide a Drush option to ingest compound objects. Currently, only batches of compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
 
 ```
 batch_directory/
@@ -112,7 +112,7 @@ After you have prepared your content, the remaining steps are much like those re
 
 The batch preprocessor is called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
-`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/input/directory --namespace=mynamespace --parent=namespace:some_collection`
+`drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection
 
 This will populate the queue (stored in the Drupal database) with base entries.
 
