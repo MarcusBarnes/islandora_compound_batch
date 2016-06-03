@@ -71,9 +71,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             $compound_object_pid = $this->addToDatabase($batch_object);
             //echo "Return Value: $returnvalue" . PHP_EOL;
 
-            //$this->addCompoundStrcuture($filePath, $compound_object_pid);
-            //$this->addCompoundStrcuture($filePath);
-            $this->addStrcutureData($filePath, $compound_object_pid);
+            $this->addStructureData($filePath, $compound_object_pid);
         }
         
 
@@ -91,71 +89,11 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
      }
   }  
   
-  /**
-   *  Parses CPD file and adds data to the islandora_compound_batch database table
-   *  
-   */
-   public function addCompoundStrcuture($structure_file_path, $compound_object_pid) {
-        static $object_num = 0;
-        
-        $batch_id = $this->getSetId();
-        
-        // Object ID is the batch set ID concatenated with the object number.
-        $object_id = $batch_id . $object_num;
-        
-        // Increment 
-        $object_num++;
-        
-        
-        $doc = new DOMDocument();
-        $doc->load($structure_file_path);
-        
-        $wanted_tags = array('node', 'page');
-        foreach ($doc->getElementsByTagName('*') as $node) {
-            if (in_array($node->nodeName, $wanted_tags)) {
-              $this->icbpecho("Node name:\t" . $node->nodeName . "\n");
-              if ($node->nodeName == 'page') {
-                $xpath = new DOMXPath($doc);
-                $pageptrs = $xpath->query('pageptr', $node);
-                $pageptr = $pageptrs->item(0);
-                $this->icbpecho("Page pointer:\t" . $pageptr->nodeValue . "\n");
-                $pageptrValue = $pageptr->nodeValue;
-              }
-              $path = $node->getNodePath();
-              $this->icbpecho("Path:\t\t$path\n");
-              if ($node->nodeName == 'node') {
-                $xpath = new DOMXPath($doc);
-                $node_titles = $xpath->query('nodetitle', $node);
-                $node_title = $node_titles->item(0);
-                $this->icbpecho("Node title:\t" . $node_title->nodeValue . "\n");
-              }
-              $parentNode = $node->parentNode;
-              $this->icbpecho("Parent path:\t" . $parentNode->getNodePath() . "\n\n");
-              $parentNode = trim($parentNode->getNodePath());
-              $insert_result = db_insert('islandora_compound_batch')
-                ->fields(array(
-                   'object_id' => $object_id,
-                   'object_xpath' => $path,
-                   'parent_xpath' => $parentNode,                   
-                   'pageptr' => $pageptrValue,
-                   'parent_pid' => $compound_object_pid,
-                   'batch_id' => $batch_id            
-                ))
-                ->execute();
-                
-               $this->icbpecho("Insert Result: $insert_result" . PHP_EOL);
-            }
-            
-        }       
-        
-    } // End of addCompoundStrcuture
-    
-    
    /**
    *  Parses structure.xml file and adds data to the islandora_compound_batch database table
    *  
    */
-   public function addStrcutureData($structure_file_path, $compound_object_pid) {
+   public function addStructureData($structure_file_path, $compound_object_pid) {
         static $object_num = 0;
         
         $batch_id = $this->getSetId();
@@ -183,11 +121,10 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
                 $this->icbpecho("Node name:\t" . $node->nodeName . "\n");
                 if ($node->nodeName == 'child') {
                     $xpath = new DOMXPath($doc);
-                    $pointers = $xpath->query('@content', $node);
-                    //var_dump($pointers);
-                    $pointer = $pointers->item(0);
-                    $this->icbpecho("Page pointer:\t" . $pointer->nodeValue . "\n");
-                    $pointerValue = $pointer->nodeValue;
+                    $child_contents = $xpath->query('@content', $node);
+                    $child_content = $child_contents->item(0);
+                    $this->icbpecho("Child content value:\t" . $child_content->nodeValue . "\n");
+                    $child_content_value = $child_content->nodeValue;
                 }
                 $path = $node->getNodePath();
                 $this->icbpecho("Path:\t\t$path\n");
@@ -201,7 +138,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
                         'object_id' => $object_id,
                         'object_xpath' => $path,
                         'parent_xpath' => $parentNode,                   
-                        'pageptr' => $pointerValue,
+                        'child_content_value' => $child_content_value,
                         'parent_pid' => $compound_object_pid,
                         'batch_id' => $batch_id            
                ))->execute();
@@ -211,6 +148,6 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
             
         }       
         
-    } // End of addStrcutureData
+    } // End of addStructureData
   
 }

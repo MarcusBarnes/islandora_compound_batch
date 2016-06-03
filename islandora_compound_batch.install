@@ -19,8 +19,8 @@ function islandora_compound_batch_schema() {
                 'unsigned' => TRUE,
                 'not null' => TRUE,
             ),
-            'pageptr' => array(
-                'description' => 'The pointer corresponding to value of the pageptr element in the CPD file.',
+            'child_content_value' => array(
+                'description' => "The value of the child 'content' attribute in the objects's structure.xml file.",
                 'type' => 'int',
                 'size' => 'big',
                 'unsigned' => TRUE,

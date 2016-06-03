@@ -132,10 +132,10 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   private function inferIslandoraCompoundBatchRow($path, $batchset_id) {
   
     // Assumes that the path to the DSID is ../pointer/dsid.EXT
-    $pointer = basename(dirname($path));
+    $child_content_path = basename(dirname($path));
     $result = db_select('islandora_compound_batch', 'q')
         ->fields('q')
-        ->condition('q.pageptr', $pointer)
+        ->condition('q.child_content_value', $child_content_path)
         ->condition('q.batch_id', $batchset_id)
         ->execute()
         ->fetchAssoc();
