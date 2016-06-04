@@ -51,8 +51,8 @@ function islandora_compound_batch_drush_command() {
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
-  $items['islandora_compound_batch_flush_relationships'] = array(
-    'aliases' => array('icbfr'),
+  $items['islandora_compound_batch_prune_relationships'] = array(
+    'aliases' => array('icbpr'),
     'description' => 'Removes rows from the islandora_compound_batch table that no longer have a batch associated with them.',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
@@ -104,7 +104,7 @@ function drush_islandora_compound_batch_preprocess_validate() {
 /**
  * Implements hook_drush_command().
  */
-function drush_islandora_compound_batch_flush_relationships() {
+function drush_islandora_compound_batch_prune_relationships() {
   // Delete all the rows from {islandora_compound_batch} that do not have
   // corresponding rows in {islandora_batch_set}.
   $result = db_query("DELETE icb FROM {islandora_compound_batch} icb LEFT JOIN {islandora_batch_set} o ON icb.batch_id = o.id WHERE o.id IS NULL");

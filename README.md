@@ -124,9 +124,9 @@ The queue of preprocessed items is then processed by running the ingest command:
 
 This module records parent-child relationships in a database table. Periodically, you should prune this table by running the following command:
 
-`drush --user=admin islandora_compound_batch_flush_relationships`
+`drush --user=admin islandora_compound_batch_prune_relationships`
 
-This command will remove relationships associated with batch sets that have been deleted. Relationships associated with batch sets that have not been deleted will remain in the database.
+This command will remove relationships associated with Islandora batch sets that have been deleted. Relationships associated with batch sets that have not been deleted will remain in the database.
 
 ## OBJ extension to content model mappings
 
