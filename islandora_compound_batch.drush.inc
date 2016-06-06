@@ -51,6 +51,11 @@ function islandora_compound_batch_drush_command() {
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
+  $items['islandora_compound_batch_prune_relationships'] = array(
+    'aliases' => array('icbpr'),
+    'description' => 'Removes rows from the islandora_compound_batch table that no longer have a batch associated with them.',
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
+  );
 
   return $items;
 }
@@ -94,4 +99,15 @@ function drush_islandora_compound_batch_preprocess_validate() {
   if (!in_array('islandora:compoundCModel', $object->models)) {
     return drush_set_error('Not a compound object', dt('The specified parent (@parent) is not a compound object.', array('@parent' => $parent)));
   }*/
+}
+
+/**
+ * Implements hook_drush_command().
+ */
+function drush_islandora_compound_batch_prune_relationships() {
+  // Delete all the rows from {islandora_compound_batch} that do not have
+  // corresponding rows in {islandora_batch_set}.
+  $result = db_query("DELETE icb FROM {islandora_compound_batch} icb LEFT JOIN {islandora_batch_set} o ON icb.batch_id = o.id WHERE o.id IS NULL");
+  $num_deleted = $result->rowCount();
+  drush_log(t("Deleted @n rows from islandora_compound_batch", array('@n' => $num_deleted)), "ok");
 }
