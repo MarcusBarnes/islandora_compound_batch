@@ -2,21 +2,23 @@
 
 ## Introduction
 
-This module extends the Islandora batch framework to provide a Drush option to ingest compound objects. Currently, only batches of compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
+This module extends the Islandora batch framework to provide a Drush command to ingest compound objects. Currently, only batches of compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
 
 ```
 batch_directory/
 ├── compound_object_1
 │   ├── child_1
-│   └── child_2
+│   ├── child_2
+│   └── child_3
 ├── compound_object_2
 │   ├── child_1
 │   └── child_2
 └── compound_object_3
     ├── child_1
-    └── child_2
+    ├── child_2
+    ├── child_3
+    └── child_4
 ```
-
 
 The ingest is a four-step process:
 
@@ -67,10 +69,11 @@ input_directory
     │   └── OBJ.jp2
     └── MODS.xml
 ```
+The names of the parent and child directories don't matter, but the names of the files within them do, as explained below.
 
 #### Step 2: Generating structure files
 
-Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path_to_directory_containing_compound_objects`. Running this script will add a `structure.xml` file to each parent object:
+Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path/to/directory/containing/compound_objects`. Running this script will add a `structure.xml` file to each parent object:
 
 ```
 input_directory
@@ -94,7 +97,7 @@ input_directory
     └── structure.xml
 ```
 
-If necessary, you can edit an object's `structure.xml` file to ensure that the children are in the order you want them to be in when they are ingested into the compound object in Islandora. The structure.xml files look like this:
+If necessary, you can edit an object's `structure.xml` file to ensure that the children are in the order you want them to be in when they are ingested into the compound object in Islandora. The `structure.xml` files look like this:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -104,7 +107,7 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 </islandora_compound_object>
 ```
 
-Each structure file contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted here for brevity). The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.
+The value of each `<child>` element is the name of the subdirectory containing the child object's MODS and OBJ files. The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.  Each `structure.xml` file also contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted in this example for brevity).
 
 #### Steps 3 and 4: Ingesting your prepared content into Islandora
 
@@ -130,7 +133,7 @@ This command will remove relationships associated with Islandora batch sets that
 
 ## OBJ extension to content model mappings
 
-This module determines which content model to assign to child objects based on the extension of the OBJ file. The mapping used in this assignment is:
+This module determines which content model to assign to child objects based on the extension of the child's OBJ file. The mapping used is:
 
 ```
 jpeg => islandora:sp_basic_image
