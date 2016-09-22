@@ -27,12 +27,12 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    */
   public function batchProcess() {
     // OBJ datastream.
-    
+
     $batchset_id =  $this->preprocessorParameters['set_id'];
-    
+
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
-    $file_name = $pathinfo['filename'];    
+    $file_name = $pathinfo['filename'];
     if ($file_name != 'MODS') {
         $obj = $this->constructDatastream('OBJ', 'M');
         $obj->label = 'OBJ Datastream';
@@ -45,15 +45,15 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
 
     module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
     $cbUtilities = new Utilies;
-    
-    // MODS, then from it DC, datastreams.    
+
+    // MODS, then from it DC, datastreams.
     if ($mods = $this->getMods()) {
-      
+
       $this->ingestDatastream($mods);
 
       $path_to_mods_to_dc_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/mods_to_dc.xsl';
       $mods_to_dc_xsl = file_get_contents($path_to_mods_to_dc_xsl);
-      // compound batch utilities class   
+      // compound batch utilities class
 
       $dc_content = $cbUtilities->apply_xslt($mods_to_dc_xsl, $mods->content);
       $dc = $this->constructDatastream('DC', 'M');
@@ -75,21 +75,21 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
         $this->label = '[No object label available]';
       }
     }
-    
-    
-    
+
+
+
     // Add common relationship.
-    $this->addRelationships();    
-    
+    $this->addRelationships();
+
     // check if object is a parent wrapper object (will have it's own mods).
     // if it is not a parent wrapper object, infer parent from  compoundObjFilePath and
     // islandora_compound_batch table.
-    // update the relationships accordingly - parent 
-    
+    // update the relationships accordingly - parent
+
     $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath, $batchset_id);
+    print_r($this->compoundObjFilePath);
     $parent_pid = $compoundBatchRow['parent_pid'];
     $object_xpath = $compoundBatchRow['object_xpath'];
-    
     // Parent objects will return NULL from inferPerent method.
     if (!is_null($parent_pid)) {
        $sequenceNumber = $this->seqNumBasedOnXpath($object_xpath);
@@ -98,9 +98,9 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
        $fileExtension = pathinfo($this->compoundObjFilePath, PATHINFO_EXTENSION);
        $contentModel = $cbUtilities->getContentModelFromFileExt($fileExtension);
        $this->models = $contentModel;
-    } 
+    }
     else {
-       //$this->addRelationshipsForParent();        
+       //$this->addRelationshipsForParent();
        $this->models = 'islandora:compoundCModel';
        $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
     }
@@ -108,10 +108,10 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // Indicate that this object is ready to actually go into Fedora.
     return ISLANDORA_BATCH_STATE__DONE;
   }
-  
+
   private function seqNumBasedOnXpath($object_xpath) {
-  
-      
+
+
       // Example path for second sequence number cpd/page[2]
       $pattern = '%\[([0-9]*?)\]%';
       $result = preg_match($pattern, $object_xpath, $matches);
@@ -120,28 +120,31 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
         //cpd/page will occur based on preprocessor code for compound object with one child.
         // requires sequence number 1 for thumbnails to appear for parent object
         return 1;
-      } 
-      else {      
+      }
+      else {
         return $matches[1];
       }
   }
-  
+
   /**
    * Infer the row that contains data for the given file (if any).
    */
   private function inferIslandoraCompoundBatchRow($path, $batchset_id) {
-  
-    // Assumes that the path to the DSID is ../pointer/dsid.EXT
-    $child_content_path = basename(dirname($path));
+
+    // Assumes that the path to the DSID is
+    // parent_directory/child_directory_name(if any)/dsid.EXT
+    $parent_directory_name = basename(dirname(dirname($path)));
+    $child_directory_name = basename(dirname($path));
+    $child_content_value = $parent_directory_name . '/' . $child_directory_name;
     $result = db_select('islandora_compound_batch', 'q')
         ->fields('q')
-        ->condition('q.child_content_value', $child_content_path)
+        ->condition('q.child_content_value', $child_content_value)
         ->condition('q.batch_id', $batchset_id)
         ->execute()
         ->fetchAssoc();
-    
+
     return $result;
- 
+
   }
 
 
@@ -151,7 +154,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   public function addRelationships() {
     // $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
   }
-  
+
    /**
    * Add basic relationships for parent object.
    */
@@ -160,8 +163,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // parent objects are compound
     $this->models = 'islandora:compoundCModel';
   }
-  
-  /** 
+
+  /**
    *  Add parent-child relationships
    */
   public function addRelationshipsForChild($parent_pid, $sequenceNumber) {
@@ -194,15 +197,15 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    *   was created.
    */
   private function getMods() {
-   
+
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
     if ($file_name == 'MODS') {
         $mods_file_path = $this->compoundObjFilePath;
-    } 
+    }
     else {
-        $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';    
+        $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';
     }
 
     if (file_exists($mods_file_path)) {
