@@ -107,7 +107,7 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 </islandora_compound_object>
 ```
 
-The value of each `<child>` element is the name of the subdirectory containing the child object's MODS and OBJ files. The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.  Each `structure.xml` file also contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted in this example for brevity).
+The value of the content attribute of each `<child>` element is the name of the parent directory, followed by a forward slash `/`, then the name the subdirectory containing the child object's MODS and OBJ files. The `title` attribute of the `<islandora_compound_object>` element is only used if the directory does not contain a MODS.xml file. Otherwise, the title assigned in the MODS file is used.  Each `structure.xml` file also contains a comment explaining how the file is interpreted by the Islandora Compound Batch module (the comment is omitted in this example for brevity).
 
 #### Steps 3 and 4: Ingesting your prepared content into Islandora
 
