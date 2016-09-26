@@ -87,7 +87,6 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     // update the relationships accordingly - parent
 
     $compoundBatchRow = $this->inferIslandoraCompoundBatchRow($this->compoundObjFilePath, $batchset_id);
-    print_r($this->compoundObjFilePath);
     $parent_pid = $compoundBatchRow['parent_pid'];
     $object_xpath = $compoundBatchRow['object_xpath'];
     // Parent objects will return NULL from inferPerent method.
