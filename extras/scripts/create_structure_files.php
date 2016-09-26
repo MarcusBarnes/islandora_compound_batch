@@ -12,15 +12,15 @@
  *      child_2\
  *      child_3\
  *    compound_object_3\
- *    [...] 
- * 
+ *    [...]
+ *
  * This script must be run to prepare compound objects for ingesting using
  * Islandora Compound Batch.
  *
  * Usage:
  *
- * > php create_strcutre_files.php path_to_directory_containing_compound_objects 
- */ 
+ * > php create_strcutre_files.php path_to_directory_containing_compound_objects
+ */
 
 
 $target_directory = trim($argv[1]);
@@ -60,7 +60,7 @@ function scanWrapperDirectory($target_directory, $structurefilename = 'structure
 
            // Apply XSLT.
            $structure_xml = treeToCompound($path_to_xsl, $structure_xml);
-           $structure_xml_output_file_path = $objpath . DIRECTORY_SEPARATOR 
+           $structure_xml_output_file_path = $objpath . DIRECTORY_SEPARATOR
                                             . $structurefilename . '.xml';
            file_put_contents($structure_xml_output_file_path, $structure_xml);
         }
@@ -102,34 +102,45 @@ function get_dir_name() {
     $base_dir_pattern = '#^.*' . DIRECTORY_SEPARATOR . '#';
     $dir_path = preg_replace($base_dir_pattern, '', $dir_path);
     $dir_path = ltrim($dir_path, DIRECTORY_SEPARATOR);
-    echo $dir_path;
+    //echo $dir_path . PHP_EOL;
     return $dir_path;
 }
 
-/** 
+/**
  * Recursively create XML string of directory/tree structure.
- * Based on psuedo-code from http://stackoverflow.com/a/15096721/850828 
+ * Based on psuedo-code from http://stackoverflow.com/a/15096721/850828
  */
-function directoryXML($directory_path) {
+function directoryXML($directory_path, $state = NULL) {
     //  basenames to exclude.
     $exclude_array = array('..', '.DS_Store', 'Thumbs.db', '.');
-    
+
     $dir_name = basename($directory_path);
-    $xml = "<directory name='" . $dir_name . "'>";
-    
+    //echo $dir_name . PHP_EOL;
+
+
+    if(!is_null($state)){
+        echo $state . PHP_EOL;
+        $xml = "<directory name='". $state . "/" . $dir_name . "'>";
+    } else {
+        $xml = "<directory name='" . $dir_name . "'>";
+    }
+
     $pathbase = pathinfo($directory_path, PATHINFO_BASENAME);
     $stuffindirectory = scandir($directory_path);
-    
+
     foreach($stuffindirectory as $subdirOrfile){
         $subdirOrfilepath = $directory_path . DIRECTORY_SEPARATOR  . $subdirOrfile;
         if(!in_array($subdirOrfile, $exclude_array) && is_file($subdirOrfilepath)){
           $xml .= "<file name='". $subdirOrfile . "' />";
         }
         if(!in_array($subdirOrfile, $exclude_array) && is_dir($subdirOrfilepath)){
-            $xml .= directoryXML($subdirOrfilepath);        
+            //echo $subdirOrfilepath . PHP_EOL;
+            $state = $dir_name;
+            $xml .= directoryXML($subdirOrfilepath, $state);
         }
     }
     $xml .= "</directory>";
+    //print_r($xml);
     return $xml;
 }
 
