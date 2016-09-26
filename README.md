@@ -102,8 +102,8 @@ If necessary, you can edit an object's `structure.xml` file to ensure that the c
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <islandora_compound_object title="parent_one">
-  <child content="first_child"/>
-  <child content="second_child"/>
+  <child content="parent_one/first_child"/>
+  <child content="parent_one/second_child"/>
 </islandora_compound_object>
 ```
 
