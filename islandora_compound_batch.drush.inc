@@ -47,7 +47,7 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The predicate of the relationship to the parent. Defaults to "isMemberOf".',
         'value' => 'optional',
       ),
-      
+
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );
@@ -77,9 +77,9 @@ function drush_islandora_compound_batch_preprocess() {
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
     'icbp_verbose' => drush_get_option('icbp_verbose'),
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
-    'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),    
+    'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
   );
-   
+
   // Pass the preprocessor off to run.
   $preprocessor = new IslandoraCompoundBatchPreprocessor($connection, $parameters);
   $preprocessed = islandora_batch_handle_preprocessor($preprocessor);
@@ -97,7 +97,7 @@ function drush_islandora_compound_batch_preprocess_validate() {
   }
   /*
   if (!in_array('islandora:compoundCModel', $object->models)) {
-    return drush_set_error('Not a compound object', dt('The specified parent (@parent) is not a compound object.', array('@parent' => $parent)));
+  return drush_set_error('Not a compound object', dt('The specified parent (@parent) is not a compound object.', array('@parent' => $parent)));
   }*/
 }
 
