@@ -29,12 +29,6 @@ function islandora_compound_batch_form($form, &$form_state, $object) {
     '#value' => $object->id,
   );
 
-  /*$form['create_pdfs'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Create PDFs?'),
-  '#description' => t('Whether or not we should generate PDFs for the appropriate objects within the compound objects after ingesting all objects.'),
-  ); */
-
   $form['namespace'] = array(
     '#type' => 'textfield',
     '#title' => t('Namespace for created objects?'),
@@ -42,25 +36,6 @@ function islandora_compound_batch_form($form, &$form_state, $object) {
     "#default_value" => $default_namespace,
     '#size' => 15,
   );
-  /*if (module_exists('islandora_ocr')) {
-  module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
-  $derive = islandora_paged_content_get_enabled_ingest_derivatives('islandora_compound');
-  if ($derive['ocr']) {
-  $form['generate_ocr'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Generate OCR?'),
-  '#description' => t('Whether or not we should generate OCR for the pages of the compound object.'),
-  '#default_value' => TRUE,
-  );
-  }
-  }*/
-  /*
-  $form['email_admin'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Notify admin after ingest?'),
-  '#description' => t('Whether or not we should notify the site admin that a compound object has been ingested after the ingest of the compound object completes (requires relevant "Rules" rule).'),
-  );
-   */
 
   $form['ingest_set_immediately'] = array(
     '#type' => 'checkbox',
