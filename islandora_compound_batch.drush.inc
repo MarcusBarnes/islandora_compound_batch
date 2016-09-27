@@ -97,7 +97,9 @@ function drush_islandora_compound_batch_preprocess_validate() {
   }
   /*
   if (!in_array('islandora:compoundCModel', $object->models)) {
-  return drush_set_error('Not a compound object', dt('The specified parent (@parent) is not a compound object.', array('@parent' => $parent)));
+  return drush_set_error('Not a compound object',
+  dt('The specified parent (@parent) is not a compound object.',
+  array('@parent' => $parent)));
   }*/
 }
 
