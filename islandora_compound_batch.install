@@ -9,71 +9,71 @@
  * Implements hook_schema().
  */
 function islandora_compound_batch_schema() {
-    $schema['islandora_compound_batch'] = array(
-        // Specification for the "islandora_compound_batch" table
-        'description' => 'Registers data for batch ingest of compound objects.',
-        'fields' => array(
-            'id' => array(
-                'description' => 'ID to identify row for convienience in queries.',
-                'type' => 'serial',
-                'unsigned' => TRUE,
-                'not null' => TRUE,
-            ),
-            'child_content_value' => array(
-                'description' => "The value of the child 'content' attribute in the objects's structure.xml file.",
-                'type' => 'text',
-                'size' => 'normal',
-                'not null' => TRUE,
-            ),
-            'object_id' => array(
-                'description' => 'ID for grouping child objects of an object. The object ID is the batch set ID concatenated with the object count number in the batch.',
-                'type' => 'int',
-                'size' => 'big',
-                'unsigned' => TRUE,
-                'not null' => TRUE,
-                'default' => 0,
-            ),
-            'object_xpath' => array(
-                'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
-                'type' => 'text',
-                'size' => 'normal',
-                'not null' => TRUE,
-            ),
-            'parent_xpath' => array(
-                'description' => "XPath of the child object's immediate parent. Populated during the batch preprocess phase.",
-                'type' => 'text',
-                'size' => 'normal',
-                'not null' => TRUE,
-            ),
-            'object_pid' => array(
-                'description' => 'The PID of the child object. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.',
-                'type' => 'int',
-                'size' => 'big',
-                'unsigned' => TRUE,
-                'not null' => TRUE,
-                'default' => 0,
-            ),
-            'parent_pid' => array(
-                'description' => "The PID of the child's immediate parent. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.",
-                'type' => 'varchar',
-                'length' => '255',
-                'not null' => TRUE,
-                'default' => '',
-            ),
-              'batch_id' => array(
-                'description' => "The batch ID for which the object is a part of.",
-                'type' => 'int',
-                'size' => 'big',
-                'unsigned' => TRUE,
-                'not null' => TRUE,
-                'default' => 0,
-            ),
-        ),
-        'unique keys' => array(
-            'id' => array('id'),
-        ),
-        'primary key' => array('id'),
-    );
+  $schema['islandora_compound_batch'] = array(
+        // Specification for the "islandora_compound_batch" table.
+    'description' => 'Registers data for batch ingest of compound objects.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'ID to identify row for convienience in queries.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'child_content_value' => array(
+        'description' => "The value of the child 'content' attribute in the objects's structure.xml file.",
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'object_id' => array(
+        'description' => 'ID for grouping child objects of an object. The object ID is the batch set ID concatenated with the object count number in the batch.',
+        'type' => 'int',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'object_xpath' => array(
+        'description' => 'XPath path of the current child object. Populated during the batch preprocess phase.',
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'parent_xpath' => array(
+        'description' => "XPath of the child object's immediate parent. Populated during the batch preprocess phase.",
+        'type' => 'text',
+        'size' => 'normal',
+        'not null' => TRUE,
+      ),
+      'object_pid' => array(
+        'description' => 'The PID of the child object. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.',
+        'type' => 'int',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'parent_pid' => array(
+        'description' => "The PID of the child's immediate parent. Assigned during the batch ingest phase and added to this row for use during the postprocess phase.",
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'batch_id' => array(
+        'description' => "The batch ID for which the object is a part of.",
+        'type' => 'int',
+        'size' => 'big',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'unique keys' => array(
+      'id' => array('id'),
+    ),
+    'primary key' => array('id'),
+  );
 
-    return $schema;
+  return $schema;
 }
