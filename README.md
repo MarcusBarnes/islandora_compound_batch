@@ -171,7 +171,7 @@ Please open an issue in this Github repo's issue queue.
 
 * [Simon Fraser University Library](http://www.lib.sfu.ca/)
 * The [Digital Scholarship Unit (DSU)](https://www.utsc.utoronto.ca/digitalscholarship/)
-at the UTSC Library.
+at the UTSC Library
 
 
 ## To do
