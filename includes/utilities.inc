@@ -19,8 +19,7 @@ class Utilies {
   public function __construct() {
     $this->extensionToContentModelMap = array(
       'jpeg' => 'islandora:sp_basic_image',
-      'jpe' => 'islandora:sp_basic_image',
-      'jpeg' => 'islandora:sp_basic_image',
+      'jpg' => 'islandora:sp_basic_image',
       'gif' => 'islandora:sp_basic_image',
       'png' => 'islandora:sp_basic_image',
       'tif' => 'islandora:sp_large_image_cmodel',
