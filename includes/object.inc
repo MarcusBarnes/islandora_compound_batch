@@ -203,6 +203,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $mods_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MODS.xml';
     }
 
+    $marcxml_file_path = $dir_name . DIRECTORY_SEPARATOR . 'MARCXML.xml';
+
     if (file_exists($mods_file_path)) {
       $mods = $this->constructDatastream('MODS', 'M');
       $mods->mimetype = 'application/xml';
@@ -210,8 +212,21 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $mods->setContentFromFile($mods_file_path, FALSE);
       return $mods;
     }
+    else if(file_exists($marcxml_file_path)) {
+      // There is no MODS but there is MARCXML.
+      $cb_utilities = new Utilies();
+      $path_to_marc_to_mods_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/MARC21slim2MODS3-4.xsl';
+      $marc_to_mods_xsl = file_get_contents($path_to_marc_to_mods_xsl);
+      // Compound batch utilities class.
+      $mods_content = $cb_utilities->apply_xslt($marc_to_mods_xsl, file_get_contents($marcxml_file_path));
+      $mods = $this->constructDatastream('MODS', 'M');
+      $mods->mimetype = 'application/xml';
+      $mods->label = 'MODS metadata';
+      $mods->setContentFromString($mods_content);
+      return $mods;
+    }
     else {
-      // In the absence of a poper MODS file, generate a minimal one.
+      // In the absence of a poper MODS or MARCXML file, generate a minimal one.
       $mods = $this->constructDatastream('MODS', 'M');
       $mods->content = <<<EOQ
 <mods xmlns='http://www.loc.gov/mods/v3'>
