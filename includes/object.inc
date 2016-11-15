@@ -90,8 +90,24 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $this->addRelationshipsForChild($parent_pid, $sequence_number);
 
       $file_extension = pathinfo($this->compoundObjFilePath, PATHINFO_EXTENSION);
-      $content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
-      $this->models = $content_model;
+      if ($this->preprocessorParameters['content_models']) {
+        $maps = explode(',', $this->preprocessorParameters['content_models']);
+        foreach ($maps as $map) {
+          if ($content_model = $cb_utilities->getContentModelFromParam($file_extension, $map)) {
+            $this->models = $content_model;
+            // We've got our content model, let's not continue.
+            break;
+          }
+          else {
+            $content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
+            $this->models = $content_model;
+          }
+        }
+      }
+      else {
+        $content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
+        $this->models = $content_model;
+      }
     }
     else {
       $this->models = 'islandora:compoundCModel';

@@ -137,7 +137,7 @@ This module determines which content model to assign to child objects based on t
 
 ```
 jpeg => islandora:sp_basic_image
-jpe => islandora:sp_basic_image
+jpg => islandora:sp_basic_image
 jpeg => islandora:sp_basic_image
 gif => islandora:sp_basic_image
 png => islandora:sp_basic_image
@@ -163,6 +163,15 @@ mov => islandora:sp_videoCModel
 ogv => islandora:sp_videoCModel
 ```
 
+You can override these mappings by providing a comma-separated list of extension-to-cmodel mappings in the optional `--content_models` drush option, like this:
+
+`drush -v --user=admin islandora_compound_batch_preprocess --content_models=pdf::islandora:fooCModel --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
+
+or
+
+`drush -v --user=admin islandora_compound_batch_preprocess --content_models=pdf::islandora:fooCModel,jpg::islandora:bar_cmodel --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
+
+
 ## Troubleshooting/Issues
 
 Please open an issue in this Github repo's issue queue.
@@ -178,7 +187,6 @@ at the University of Toronto Scarborough Library
 
 * Add support for hierarchical compound objects (i.e., with children that have children)
 * Graphical user interface
-* A way to allow overriding the extenstion to content model mapping
 
 ## Development
 
