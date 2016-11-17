@@ -65,6 +65,27 @@ class Utilies {
   }
 
   /**
+   * Parses optional --content_models drush param.
+   *
+   * @param string $fileExt
+   *   The extension of the current child object's payload file.
+   * @param string $map
+   *   The extention::cmodelPID map.
+   *
+   * @return string/bool
+   *   The PID of the content model to assign to the current child,
+   *   FALSE if the mapping doesn't apply.
+   */
+  public function getContentModelFromParam($fileExt, $map) {
+    list($targetExt, $cmodel) = explode('::', $map);
+    if (strlen($targetExt)) {
+      if ($targetExt == $fileExt) {
+        return trim($cmodel);
+      }
+    }
+  }
+
+  /**
    * Applies an XSLT transform to an XML string.
    * Based off of
    * islandora_solution_pack_xml_apply_xslt in

@@ -31,6 +31,10 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The namespace for objects created by this command.  Defaults to namespace set in Fedora config.',
         'required' => FALSE,
       ),
+      'content_models' => array(
+        'description' => 'Defines the (single) content model to apply to child data files that have a specific extension. Use format "ext::cmodel_pid.',
+        'value' => 'optional',
+      ),
       'parent' => array(
         'description' => 'The collection to which the generated items should be added.  If "directory" and the directory containing the object description is a valid PID, it will be set as the parent. If this is specified and itself is a PID, all compound objects will be related to the given PID.',
         'required' => TRUE,
@@ -75,6 +79,7 @@ function drush_islandora_compound_batch_preprocess() {
     'namespace' => drush_get_option('namespace'),
     'target' => drush_get_option('target'),
     'parent' => drush_get_option('parent', 'islandora:compoundCollection'),
+    'content_models' => drush_get_option('content_models'),
     'icbp_verbose' => drush_get_option('icbp_verbose'),
     'parent_relationship_uri' => drush_get_option('parent_relationship_uri', 'info:fedora/fedora-system:def/relations-external#'),
     'parent_relationship_pred' => drush_get_option('parent_relationship_pred', 'isMemberOf'),
