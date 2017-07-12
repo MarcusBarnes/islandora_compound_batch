@@ -115,6 +115,14 @@ After you have prepared your content, the remaining steps are much like those re
 
 The batch preprocessor is called as a drush script (see `drush help islandora_compound_batch_preprocess` for additional parameters):
 
+Drush made the `target` parameter reserved as of Drush 7. To allow for backwards compatability this will be preserved.
+
+Drush 7 and above:
+
+`drush -v --user=admin islandora_compound_batch_preprocess --scan_target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
+
+Drush 6 and below:
+
 `drush -v --user=admin islandora_compound_batch_preprocess --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
 
 This will populate the queue (stored in the Drupal database) with base entries.
@@ -164,6 +172,8 @@ ogv => islandora:sp_videoCModel
 ```
 
 You can override these mappings by providing a comma-separated list of extension-to-cmodel mappings in the optional `--content_models` drush option, like this:
+
+Note:  `--target` applies to drush 6 and below, while `--scan_target` replaces this keyword in drush 7 and above.
 
 `drush -v --user=admin islandora_compound_batch_preprocess --content_models=pdf::islandora:fooCModel --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
 
