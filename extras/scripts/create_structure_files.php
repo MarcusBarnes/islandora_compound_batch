@@ -127,6 +127,7 @@ function directoryXML($directory_path, $state = NULL) {
 
   $pathbase = pathinfo($directory_path, PATHINFO_BASENAME);
   $stuffindirectory = scandir($directory_path);
+  sort($stuffindirectory, SORT_NATURAL);
 
   foreach ($stuffindirectory as $subdirOrfile) {
     $subdirOrfilepath = $directory_path . DIRECTORY_SEPARATOR . $subdirOrfile;
