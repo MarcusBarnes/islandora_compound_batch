@@ -179,11 +179,13 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    * Add parent-child relationships.
    */
   public function addRelationshipsForChild($parent_pid, $sequence_number) {
-    /*
+    /* (Grab the relationship predicate from the compound object solution pack setting,
+        otherwise use fedora::isConstituentOf)
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
      */
-    $this->relationships->add(FEDORA_RELS_EXT_URI, 'isConstituentOf', $parent_pid);
+    $rels_predicate = variable_get('islandora_compound_object_relationship', 'isConstituentOf');
+    $this->relationships->add(FEDORA_RELS_EXT_URI, $rels_predicate, $parent_pid);
     $escaped_pid = str_replace(':', '_', $parent_pid);
     $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $sequence_number, RELS_TYPE_PLAIN_LITERAL);
 
