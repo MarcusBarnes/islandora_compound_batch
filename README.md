@@ -29,6 +29,8 @@ The ingest is a four-step process:
 
 Step 2, generating structure files, is accomplished by running a standalone PHP script on the directory containing your objects. The last two are drush commands similar to those provided by other Islandora Batch modules. Details on each step are provided below.
 
+Note that the predicate in child objects' RELS-EXT datastream that relates them to their parent is the one that is defined in the Compound Solution Pack's "Child relationship predicate" admin setting. By default this is `isConstituentOf`.
+
 ## Requirements
 
 This module requires the following modules/libraries:
@@ -172,8 +174,6 @@ ogv => islandora:sp_videoCModel
 ```
 
 You can override these mappings by providing a comma-separated list of extension-to-cmodel mappings in the optional `--content_models` drush option, like this:
-
-Note:  `--target` applies to drush 6 and below, while `--scan_target` replaces this keyword in drush 7 and above.
 
 `drush -v --user=admin islandora_compound_batch_preprocess --content_models=pdf::islandora:fooCModel --target=/path/to/input/directory --namespace=mynamespace --parent=mynamespace:collection`
 
