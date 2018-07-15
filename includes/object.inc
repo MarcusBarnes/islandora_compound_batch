@@ -32,7 +32,9 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $pathinfo = pathinfo($this->compoundObjFilePath);
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
-    if ($file_name != 'MODS') {
+    if ($file_name != 'MODS' || $file_name != 'OBJ') {
+      $this->loadObjDatastream($this->compoundObjFilePath);
+/*
       $obj = $this->constructDatastream('OBJ', 'M');
       $obj->label = 'OBJ Datastream';
       // Must infer mimetype from file.
@@ -40,6 +42,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
       $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
       $this->ingestDatastream($obj);
+*/
     }
 
     module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
@@ -110,7 +113,17 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       }
     }
     else {
-      $this->models = 'islandora:compoundCModel';
+      $parent_obj_pattern = $dir_name . DIRECTORY_SEPARATOR . 'OBJ.*';
+      $obj_file_list = glob($parent_obj_pattern);
+      dd($obj_file_list, 'OBJ file list');
+      if (count($obj_file_list) === 1) {
+        $file_extension = pathinfo($obj_file_list[0], PATHINFO_EXTENSION);
+        $parent_content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
+        $this->models = $parent_content_model;
+      }
+      else {
+        $this->models = 'islandora:compoundCModel';
+      }
       $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
     }
 
@@ -172,7 +185,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   public function addRelationshipsForParent() {
     // ToDo? Set model(s) based on extention to model map?
     // parent objects are compound.
-    $this->models = 'islandora:compoundCModel';
+    // $this->models = 'islandora:compoundCModel';
+    dd($this->compoundObjFilePath, 'Parent path from addRelationshipsForParent');
   }
 
   /**
@@ -260,4 +274,15 @@ EOQ;
     return FALSE;
   }
 
+  private function loadObjDatastream($path_to_obj_file) {
+    $obj = $this->constructDatastream('OBJ', 'M');
+    $obj->label = 'OBJ Datastream';
+    // Must infer mimetype from file.
+    $mime_detector = new MimeDetect();
+    $obj->mimetype = $mime_detector->getMimetype($path_to_obj_file);
+    $obj->setContentFromFile($path_to_obj_file, FALSE);
+    $this->ingestDatastream($obj);
+  }
+
 }
+
