@@ -48,17 +48,29 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
         $added[] = $batch_object;
       }
       if ($file_name_with_extension == 'structure.xml') {
-
         // The structure file will be in the root directory of the compound
         // object.  We need to create a parent wrapper object to associate
-        // the OBJ child objects too.  Along with the structure file in the
+        // the child objects too. Along with the structure file in the
         // root directory of the compound object there should be a MODS file
         // (or other metadata file) giving information about the object.
-        // Associate this with the batch object.
+        // Associate this with the batch object. There may also be an OBJ file
+        // that belongs to non-islandora:compoundCModel parent objects.
         $parent_mods_file_path = dirname($file_path) . DIRECTORY_SEPARATOR . 'MODS.xml';
         $batch_object = new IslandoraCompoundBatchObject($this->connection, $parent_mods_file_path, $this->parameters);
-        // Parent wrapper object must be compound.
-        $batch_object->models = 'islandora:compoundCmodel';
+
+        $parent_obj_pattern = dirname($file_path) . DIRECTORY_SEPARATOR . 'OBJ.*';
+        $obj_file_list = glob($parent_obj_pattern);
+        if (count($obj_file_list) === 1) {
+          $file_extension = pathinfo($obj_file_list[0], PATHINFO_EXTENSION);
+          $parent_content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
+          // Parent wrapper object is determined by extension of any OBJ file present.
+          $batch_object->models = $parent_content_model;
+        }
+        else {
+          // Parent wrapper object is compound.
+          $batch_object->models = 'islandora:compoundCmodel';
+        }
+
         // Ad the instance to the Islandora batch queue.
         // Returns PID for parent object.
         $compound_object_pid = $this->addToDatabase($batch_object);
