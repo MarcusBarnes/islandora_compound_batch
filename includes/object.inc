@@ -33,11 +33,11 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     $dir_name = $pathinfo['dirname'];
     $file_name = $pathinfo['filename'];
     if ($file_name == 'OBJ') {
-      $this->loadObjDatastream();
+      $this->ingestObjDatastream();
     }
 
     module_load_include('inc', 'islandora_compound_batch', 'includes/utilities');
-    $cb_utilities = new Utilies();
+    $cb_utilities = new Utilities();
 
     // MODS, then from it DC, datastreams.
     if ($mods = $this->getMods()) {
@@ -110,6 +110,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
         $file_extension = pathinfo($obj_file_list[0], PATHINFO_EXTENSION);
         $parent_content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
         $this->models = $parent_content_model;
+        $this->ingestObjDatastream($obj_file_list[0]);
       }
       else {
         $this->models = 'islandora:compoundCModel';
@@ -164,18 +165,9 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   }
 
   /**
-   * Implements addRelationships.
+   * Implements abstract class defined in the main Batch class.
    */
   public function addRelationships() {
-  }
-
-  /**
-   * Add basic relationships for parent object.
-   */
-  public function addRelationshipsForParent() {
-    // ToDo? Set model(s) based on extention to model map?
-    // parent objects are compound.
-    // $this->models = 'islandora:compoundCModel';
   }
 
   /**
@@ -195,7 +187,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   }
 
   /**
-   * Get a list of resources.
+   * Implements abstract class defined in the main Batch class.
    */
   public function getResources() {
     return array();
@@ -235,7 +227,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
     }
     else if(file_exists($marcxml_file_path)) {
       // There is no MODS but there is MARCXML.
-      $cb_utilities = new Utilies();
+      $cb_utilities = new Utilities();
       $path_to_marc_to_mods_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/MARC21slim2MODS3-4.xsl';
       $marc_to_mods_xsl = file_get_contents($path_to_marc_to_mods_xsl);
       // Compound batch utilities class.
@@ -263,13 +255,29 @@ EOQ;
     return FALSE;
   }
 
-  private function loadObjDatastream() {
+  /**
+   * Creates an OBJ datastream.
+   *
+   * @param string $path_to_obj
+   *   If present, the absolut path to the file to use as
+   *   the OBJ datastream content.
+   **/
+  private function ingestObjDatastream($path_to_obj = NULL) {
+    if ($this['OBJ']) {
+      return;
+    }
     $obj = $this->constructDatastream('OBJ', 'M');
     $obj->label = 'OBJ Datastream';
     // Must infer mimetype from file.
     $mime_detector = new MimeDetect();
-    $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
-    $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
+    if (is_null($path_to_obj)) {
+      $obj->mimetype = $mime_detector->getMimetype($this->compoundObjFilePath);
+      $obj->setContentFromFile($this->compoundObjFilePath, FALSE);
+    }
+    else {
+      $obj->mimetype = $mime_detector->getMimetype($path_to_obj);
+      $obj->setContentFromFile($path_to_obj, FALSE);
+    }
     $this->ingestDatastream($obj);
   }
 

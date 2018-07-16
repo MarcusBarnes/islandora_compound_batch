@@ -16,7 +16,6 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    * Function to get the OBJ XML files from the input directory.
    */
   public function preprocess() {
-
     if (strtolower($this->parameters['icbp_verbose']) == 'true') {
       $this->icbpVerbose = TRUE;
     }
@@ -33,15 +32,35 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     $iterator = new RecursiveIteratorIterator($dir);
 
     // Compound batch utilities class.
-    $cb_utilities = new Utilies();
-
+    $cb_utilities = new Utilities();
     $files = array();
     foreach ($iterator as $fileinfo) {
       $file_path = $fileinfo->getPathname();
+      $file_dir = pathinfo($file_path, PATHINFO_DIRNAME);
+      $file_grandparent_dir = pathinfo($file_dir, PATHINFO_DIRNAME);
       $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
+      $file_name = pathinfo($file_path, PATHINFO_FILENAME);
       $file_name_with_extension = basename($file_path);
       $is_obj_file = $cb_utilities->extInContentModelMap($file_extension);
       if ($fileinfo->isFile() && $is_obj_file) {
+        // A parent object that does not have the content model
+        // 'islandora:compoundCmodel' may have a file named 'OBJ' in its
+        // input directory. This OBJ file should be added to the parent
+        // object as a datastream and not ingested as a separate object. To
+        // prevent this, we compare the parent object's parent directory to the
+        // batch job's input directory, since our input is organized such that
+        // each parent object is in a child of the input directory (i.e., one
+        // level below it). Check here and skip ingesting any objects whose
+        // parent directoy is a direct child of the batch's input directory.
+        if ($is_obj_file) {
+          // Compare its grandparent directory to the batch's input directory.
+          if ($file_grandparent_dir == rtrim($input_path, '/')) {
+            // If they are the same, do not add this object to the queue since
+            // the OBJ file is a datastream of the parent object, not its
+            // own object.
+            continue;
+          }
+        }
         $batch_object = new IslandoraCompoundBatchObject($this->connection, $file_path, $this->parameters);
         // Add the instances to the Islandora batch queue.
         $this->addToDatabase($batch_object);
