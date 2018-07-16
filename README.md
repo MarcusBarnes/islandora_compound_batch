@@ -71,7 +71,7 @@ input_directory
 ```
 The names of the parent and child directories don't matter, but the names of the files within them do, as explained below.
 
-This module will ingest objects that do not have the content model 'islandora:compoundCmodel' if a file named `OBJ` is in the parent's directory. The content model assigned to the parent object is determined by the extension of the OBJ file. For example, if `OBJ.pdf` is present in the `parent_one` directory, that object will be assigned the 'islandora:sp_pdf' content model and will have the `OBJ.pdf` file as its OBJ datastream, and the same object will also have `first_child` and `second_child` as children:
+This module will ingest objects that do not have the 'islandora:compoundCmodel' content model if a file named `OBJ` is in the parent's directory. The content model assigned to the parent object is determined by the extension of the OBJ file. For example, if `OBJ.pdf` is present in the `parent_one` directory, that object will be assigned the 'islandora:sp_pdf' content model and will have the `OBJ.pdf` file as its OBJ datastream, and will also have `first_child` and `second_child` as children:
 
 ```
 input_directory
