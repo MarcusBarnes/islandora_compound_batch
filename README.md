@@ -71,6 +71,29 @@ input_directory
 ```
 The names of the parent and child directories don't matter, but the names of the files within them do, as explained below.
 
+This module will ingest objects that do not have the content model 'islandora:compoundCmodel' if a file named `OBJ` is in the parent's directory. The content model assigned to the parent object is determined by the extension of the OBJ file. For example, if `OBJ.pdf` is present in the `parent_one` directory, that object will be assigned the 'islandora:sp_pdf' content model and will have the `OBJ.pdf` file as its OBJ datastream, and the same object will also have `first_child` and `second_child` as children:
+
+```
+input_directory
+├── parent_one
+│   ├── first_child
+│   │   ├── MODS.xml
+│   │   └── OBJ.jp2
+│   ├── second_child
+│   │   ├── MODS.xml
+│   │   └── OBJ.jp2
+│   └── OBJ.pdf 
+│   └── MODS.xml
+└── parent_two
+    ├── first_child
+    │   ├── MODS.xml
+    │   └── OBJ.jp2
+    ├── second_child
+    │   ├── MODS.xml
+    │   └── OBJ.jp2
+    └── MODS.xml
+```
+
 #### Step 2: Generating structure files
 
 Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path/to/directory/containing/compound_objects`. Running this script will add a `structure.xml` file to each parent object:
