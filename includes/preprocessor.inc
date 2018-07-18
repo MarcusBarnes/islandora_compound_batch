@@ -16,7 +16,6 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    * Function to get the OBJ XML files from the input directory.
    */
   public function preprocess() {
-
     if (strtolower($this->parameters['icbp_verbose']) == 'true') {
       $this->icbpVerbose = TRUE;
     }
@@ -33,32 +32,64 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     $iterator = new RecursiveIteratorIterator($dir);
 
     // Compound batch utilities class.
-    $cb_utilities = new Utilies();
-
+    $cb_utilities = new Utilities();
     $files = array();
     foreach ($iterator as $fileinfo) {
       $file_path = $fileinfo->getPathname();
+      $file_dir = pathinfo($file_path, PATHINFO_DIRNAME);
+      $file_grandparent_dir = pathinfo($file_dir, PATHINFO_DIRNAME);
       $file_extension = pathinfo($file_path, PATHINFO_EXTENSION);
+      $file_name = pathinfo($file_path, PATHINFO_FILENAME);
       $file_name_with_extension = basename($file_path);
       $is_obj_file = $cb_utilities->extInContentModelMap($file_extension);
       if ($fileinfo->isFile() && $is_obj_file) {
+        // A parent object that does not have the content model
+        // 'islandora:compoundCmodel' may have a file named 'OBJ' in its
+        // input directory. This OBJ file should be added to the parent
+        // object as a datastream and not ingested as a separate object. To
+        // prevent this, we compare the parent object's parent directory to the
+        // batch job's input directory, since our input is organized such that
+        // each parent object is in a child of the input directory (i.e., one
+        // level below it). Check here and skip ingesting any objects whose
+        // parent directoy is a direct child of the batch's input directory.
+        if ($is_obj_file) {
+          // Compare its grandparent directory to the batch's input directory.
+          if ($file_grandparent_dir == rtrim($input_path, '/')) {
+            // If they are the same, do not add this object to the queue since
+            // the OBJ file is a datastream of the parent object, not its
+            // own object.
+            continue;
+          }
+        }
         $batch_object = new IslandoraCompoundBatchObject($this->connection, $file_path, $this->parameters);
         // Add the instances to the Islandora batch queue.
         $this->addToDatabase($batch_object);
         $added[] = $batch_object;
       }
       if ($file_name_with_extension == 'structure.xml') {
-
         // The structure file will be in the root directory of the compound
         // object.  We need to create a parent wrapper object to associate
-        // the OBJ child objects too.  Along with the structure file in the
+        // the child objects too. Along with the structure file in the
         // root directory of the compound object there should be a MODS file
         // (or other metadata file) giving information about the object.
-        // Associate this with the batch object.
+        // Associate this with the batch object. There may also be an OBJ file
+        // that belongs to non-islandora:compoundCModel parent objects.
         $parent_mods_file_path = dirname($file_path) . DIRECTORY_SEPARATOR . 'MODS.xml';
         $batch_object = new IslandoraCompoundBatchObject($this->connection, $parent_mods_file_path, $this->parameters);
-        // Parent wrapper object must be compound.
-        $batch_object->models = 'islandora:compoundCmodel';
+
+        $parent_obj_pattern = dirname($file_path) . DIRECTORY_SEPARATOR . 'OBJ.*';
+        $obj_file_list = glob($parent_obj_pattern);
+        if (count($obj_file_list) === 1) {
+          $file_extension = pathinfo($obj_file_list[0], PATHINFO_EXTENSION);
+          $parent_content_model = $cb_utilities->getContentModelFromFileExt($file_extension);
+          // Parent wrapper object is determined by extension of any OBJ file present.
+          $batch_object->models = $parent_content_model;
+        }
+        else {
+          // Parent wrapper object is compound.
+          $batch_object->models = 'islandora:compoundCmodel';
+        }
+
         // Ad the instance to the Islandora batch queue.
         // Returns PID for parent object.
         $compound_object_pid = $this->addToDatabase($batch_object);

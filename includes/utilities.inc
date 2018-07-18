@@ -6,9 +6,9 @@
  */
 
 /**
- * Utilies class .
+ * Utilities class .
  */
-class Utilies {
+class Utilities{
 
   /**
    * Extension to Islandora content model map
