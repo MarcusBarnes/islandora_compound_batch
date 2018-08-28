@@ -22,6 +22,8 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     if (isset($this->parameters['type']) && $this->parameters['type'] == 'zip') {
       // @todo: Add a check for a falase return here.
       $path_to_input_files = $this->openZip($this->parameters['target']);
+
+
     }
     else {
       $path_to_input_files = $this->parameters['target'];
@@ -180,7 +182,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
   } // End of addStructureData
 
   /**
-   * Expands the uploaded .zip file.
+   * Expands the uploaded .zip file.a
    *
    * @param string $zip_uri
    *   The Drupal URI to the zip archive.
@@ -197,7 +199,13 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
       return FALSE;
     }
     $tmp_path = file_directory_temp() . DIRECTORY_SEPARATOR . pathinfo($zip_file, PATHINFO_FILENAME);
+    $tmp = file_directory_temp();
     $zip->extractTo($tmp_path);
+    require_once('structure.inc');
+    $xsl_path = '../extras/scripts/tree_to_compound_object.xsl'
+    scanWrapperDirectory($target_directory, 'structure', $xsl_path);
+
+
     $zip->close();
     return $tmp_path;
   }
