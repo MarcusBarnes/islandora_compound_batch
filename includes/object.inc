@@ -115,7 +115,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       else {
         $this->models = 'islandora:compoundCModel';
       }
-      $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
+//      $this->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', $this->preprocessorParameters['parent']);
     }
 
     // Indicate that this object is ready to actually go into Fedora.
@@ -181,8 +181,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
      */
     $rels_predicate = variable_get('islandora_compound_object_relationship', 'isConstituentOf');
     $this->relationships->add(FEDORA_RELS_EXT_URI, $rels_predicate, $parent_pid);
-    $rels_predicate = variable_get('islandora_compound_object_relationship', 'isMemberOfCollection');
-    $this->relationships->add(FEDORA_RELS_EXT_URI, $this->preprocessorParameters['parent']);
+    $rels_predicate_member = variable_get('islandora_compound_object_relationship', 'isMemberOfCollection');
+    $this->relationships->add(FEDORA_RELS_EXT_URI, $rels_predicate_member ,$this->preprocessorParameters['parent']);
     $escaped_pid = str_replace(':', '_', $parent_pid);
     $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $sequence_number, RELS_TYPE_PLAIN_LITERAL);
 
