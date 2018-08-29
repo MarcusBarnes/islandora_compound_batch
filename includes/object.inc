@@ -181,6 +181,8 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
      */
     $rels_predicate = variable_get('islandora_compound_object_relationship', 'isConstituentOf');
     $this->relationships->add(FEDORA_RELS_EXT_URI, $rels_predicate, $parent_pid);
+    $rels_predicate = variable_get('islandora_compound_object_relationship', 'isMemberOfCollection');
+    $this->relationships->add(FEDORA_RELS_EXT_URI, $this->preprocessorParameters['parent']);
     $escaped_pid = str_replace(':', '_', $parent_pid);
     $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $sequence_number, RELS_TYPE_PLAIN_LITERAL);
 
@@ -282,4 +284,3 @@ EOQ;
   }
 
 }
-
