@@ -1,7 +1,6 @@
 name = Islandora Compound Batch
 description = "Batch ingest compound objects"
 package = Islandora
-version = 7.x-dev
 core = 7.x
 dependencies[] = islandora_batch
 dependencies[] = islandora_compound_object
