@@ -23,7 +23,9 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
       // @todo: Add a check for a falase return here.
       $path_to_input_files = $this->openZip($this->parameters['target']);
       require_once('structure.inc');
-      scanWrapperDirectory($path_to_input_files, 'structure' ,'/var/www/ldl/sites/all/modules/islandora_compound_batch/extras/scripts/tree_to_compound_object.xsl');
+      $base_path = DRUPAL_ROOT;
+      $module_path = drupal_get_path('module','islandora_compound_batch');
+      scanWrapperDirectory($path_to_input_files, 'structure' ,$base_path . '/' .$module_path . '/extras/scripts/tree_to_compound_object.xsl');
     }
     else {
       $path_to_input_files = $this->parameters['target'];
