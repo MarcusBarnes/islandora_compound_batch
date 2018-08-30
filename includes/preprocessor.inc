@@ -22,6 +22,8 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     if (isset($this->parameters['type']) && $this->parameters['type'] == 'zip') {
       // @todo: Add a check for a falase return here.
       $path_to_input_files = $this->openZip($this->parameters['target']);
+      require_once('structure.inc');
+      scanWrapperDirectory($path_to_input_files, 'structure' ,'/var/www/ldl/sites/all/modules/islandora_compound_batch/extras/scripts/tree_to_compound_object.xsl');
     }
     else {
       $path_to_input_files = $this->parameters['target'];
@@ -198,11 +200,7 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     }
     $tmp_path = file_directory_temp() . DIRECTORY_SEPARATOR . pathinfo($zip_file, PATHINFO_FILENAME);
     $zip->extractTo($tmp_path);
-    //$path = shell_exec("ls $tmp_path");
-    //$actual_path = $tmp_path . DIRECTORY_SEPARATOR . $path;
-    require_once('structure.inc');
-    scanWrapperDirectory($tmp_path, 'structure' ,'/var/www/ldl/sites/all/modules/islandora_compound_batch/extras/scripts/tree_to_compound_object.xsl');
-    //exec("/usr/bin/php /var/www/ldl/sites/all/modules/islandora_compound_batch/extras/scripts/create_structure_files.php $actual_path");
+
     $zip->close();
     return $tmp_path;
   }

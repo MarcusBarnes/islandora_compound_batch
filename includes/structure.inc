@@ -37,18 +37,19 @@ function scanWrapperDirectory($target_directory, $structurefilename = 'structure
   foreach ($stuffinwrapperdirectory as $compoundObjectOrFile) {
     $objpath = $target_directory . DIRECTORY_SEPARATOR . $compoundObjectOrFile;
     if (!in_array($compoundObjectOrFile, $exclude_array) && is_dir($objpath)) {
-      $compound_obj_path = $objpath;
-      // subdirectories of wrapper directory will be compound object.
-      // create a structure file for each.
-      $structure_xml = compoundObjectStructureXML($objpath);
-      // Apply XSLT.
-      $structure_xml = treeToCompound($path_to_xsl, $structure_xml);
-      $structure_xml_output_file_path = $objpath . DIRECTORY_SEPARATOR
-                                            . $structurefilename . '.xml';
-      file_put_contents($structure_xml_output_file_path, $structure_xml);
+       // subdirectories of wrapper directory will be compound object.
+       // create a structure file for each.
+       $cpd_struct = compoundObjectStructureXML($objpath);
+       // Apply XSLT.
+       $structure_xml = treeToCompound($path_to_xsl, $cpd_struct);
+       $structure_xml_output_file_path = $objpath . DIRECTORY_SEPARATOR
+                                              . $structurefilename . '.xml';
+       file_put_contents($structure_xml_output_file_path, $structure_xml);
     }
   }
 }
+
+
 function treeToCompound($path_to_xsl, $tree_output_xml) {
   $xsl = $path_to_xsl;
   // tree_output_xml is an xml string.
@@ -68,19 +69,19 @@ function treeToCompound($path_to_xsl, $tree_output_xml) {
  *
  * Called from within the XSLT stylesheet.
  */
-// function get_dir_name($compound_obj_path) {
-//   // global $input_dir;
-//   // global  $target_directory;
-//   global $compound_obj_path;
-//   $input_dir = $compound_obj_path;
-//   $dir_path = preg_replace('/(\.*)/', '', $input_dir);
-//   $dir_path = rtrim($dir_path, DIRECTORY_SEPARATOR);
-//   $base_dir_pattern = '#^.*' . DIRECTORY_SEPARATOR . '#';
-//   $dir_path = preg_replace($base_dir_pattern, '', $dir_path);
-//   $dir_path = ltrim($dir_path, DIRECTORY_SEPARATOR);
-//   // echo $dir_path . PHP_EOL;
-//   return $dir_path;
-// }
+function get_dir_name($compound_obj_path) {
+  // global $input_dir;
+  // global  $target_directory;
+  global $compound_obj_path;
+  $input_dir = $compound_obj_path;
+  $dir_path = preg_replace('/(\.*)/', '', $input_dir);
+  $dir_path = rtrim($dir_path, DIRECTORY_SEPARATOR);
+  $base_dir_pattern = '#^.*' . DIRECTORY_SEPARATOR . '#';
+  $dir_path = preg_replace($base_dir_pattern, '', $dir_path);
+  $dir_path = ltrim($dir_path, DIRECTORY_SEPARATOR);
+  // echo $dir_path . PHP_EOL;
+  return $dir_path;
+}
 /**
  * Recursively create XML string of directory/tree structure.
  * Based on psuedo-code from http://stackoverflow.com/a/15096721/850828.
@@ -91,7 +92,7 @@ function directoryXML($directory_path, $state = NULL) {
   $dir_name = basename($directory_path);
   // echo $dir_name . PHP_EOL;
   if (!is_null($state)) {
-    echo $state . PHP_EOL;
+    //echo $state . PHP_EOL;
     $xml = "<directory name='" . $state . "/" . $dir_name . "'>";
   }
   else {
@@ -106,13 +107,12 @@ function directoryXML($directory_path, $state = NULL) {
       $xml .= "<file name='" . $subdirOrfile . "' />";
     }
     if (!in_array($subdirOrfile, $exclude_array) && is_dir($subdirOrfilepath)) {
-      // echo $subdirOrfilepath . PHP_EOL;
+      //echo $subdirOrfilepath . PHP_EOL;
       $state = $dir_name;
       $xml .= directoryXML($subdirOrfilepath, $state);
     }
   }
   $xml .= "</directory>";
-  // print_r($xml);
   return $xml;
 }
 function compoundObjectStructureXML($dir_path) {
