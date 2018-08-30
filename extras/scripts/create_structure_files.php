@@ -29,8 +29,10 @@ $target_directory = trim($argv[1]);
 if (!is_dir($target_directory)) {
   exit("Please check that you have provided a full path to a directory as the input argument." . PHP_EOL);
 }
+$base_path = DRUPAL_ROOT;
+$module_path = drupal_get_path('module','islandora_compound_batch');
 
-$path_to_xsl = "/var/www/ldl/sites/all/modules/islandora_compound_batch/extras/scripts/tree_to_compound_object.xsl.xsl";
+$path_to_xsl = "tree_to_compound_object.xsl";
 if (!file_exists($path_to_xsl)) {
   exit("Cannot find the required XSLT file ($path_to_xsl)." . PHP_EOL);
 }
