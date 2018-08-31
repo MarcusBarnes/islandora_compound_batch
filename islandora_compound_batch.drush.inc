@@ -52,7 +52,6 @@ function islandora_compound_batch_drush_command() {
         'description' => 'The predicate of the relationship to the parent. Defaults to "isMemberOf".',
         'value' => 'optional',
       ),
-//
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_LOGIN,
   );

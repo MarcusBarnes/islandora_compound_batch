@@ -16,7 +16,7 @@
     datastreams. If 'islandora_compound_object' elements do not contain a MODS.xml file, the value of
     the 'title' attribute will be used as the parent's title/label.</xsl:comment>
 
-    <islandora_compound_object >
+    <islandora_compound_object>
       <xsl:attribute name="title">
         <xsl:value-of select="php:function('get_dir_name')" />
       </xsl:attribute>

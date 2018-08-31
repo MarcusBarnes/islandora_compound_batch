@@ -127,7 +127,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    */
   private function seqNumBasedOnXpath($object_xpath) {
 
-    // Example path for second sequence number cpd/page[2]
+    // Example path for second sequence number cpd/page[2].
     $pattern = '%\[([0-9]*?)\]%';
     $result = preg_match($pattern, $object_xpath, $matches);
     // matches[0] will return square brackets.
@@ -149,16 +149,16 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
   private function inferIslandoraCompoundBatchRow($path, $batchset_id) {
 
     // Assumes that the path to the DSID is
-    // parent_directory/child_directory_name(if any)/dsid.EXT
+    // parent_directory/child_directory_name(if any)/dsid.EXT.
     $parent_directory_name = basename(dirname(dirname($path)));
     $child_directory_name = basename(dirname($path));
     $child_content_value = $parent_directory_name . '/' . $child_directory_name;
     $result = db_select('islandora_compound_batch', 'q')
-        ->fields('q')
-        ->condition('q.child_content_value', $child_content_value)
-        ->condition('q.batch_id', $batchset_id)
-        ->execute()
-        ->fetchAssoc();
+      ->fields('q')
+      ->condition('q.child_content_value', $child_content_value)
+      ->condition('q.batch_id', $batchset_id)
+      ->execute()
+      ->fetchAssoc();
 
     return $result;
 
@@ -174,13 +174,15 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    * Add parent-child relationships.
    */
   public function addRelationshipsForChild($parent_pid, $sequence_number) {
-    /* (Grab the relationship predicate from the compound object solution pack setting,
-        otherwise use fedora::isConstituentOf)
+    /* (Grab relationship predicate from compound object solution pack setting,
+    otherwise use fedora::isConstituentOf)
     <fedora:isConstituentOf rdf:resource="info:fedora/islandora:93"/>
     <islandora:isSequenceNumberOfislandora_93>1</islandora:isSequenceNumberOfislandora_93>
      */
     $rels_predicate = variable_get('islandora_compound_object_relationship', 'isConstituentOf');
     $this->relationships->add(FEDORA_RELS_EXT_URI, $rels_predicate, $parent_pid);
+    $rels_predicate_member = variable_get('islandora_compound_object_relationship', 'isMemberOfCollection');
+    $this->relationships->add(FEDORA_RELS_EXT_URI, $this->preprocessorParameters['parent']);
     $escaped_pid = str_replace(':', '_', $parent_pid);
     $this->relationships->add(ISLANDORA_RELS_EXT_URI, "isSequenceNumberOf$escaped_pid", $sequence_number, RELS_TYPE_PLAIN_LITERAL);
 
@@ -200,7 +202,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
    * plus '.MODS.xml' exists, populates the MODS datastream with that file;
    * if no such file exists, generates a minimal, templated MODS datastream.
    *
-   * @return obj|FALSE
+   * @return obj|false
    *   A datastream object for the MODS document, or FALSE if no datastream
    *   was created.
    */
@@ -225,7 +227,7 @@ class IslandoraCompoundBatchObject extends IslandoraBatchObject {
       $mods->setContentFromFile($mods_file_path, FALSE);
       return $mods;
     }
-    else if(file_exists($marcxml_file_path)) {
+    elseif (file_exists($marcxml_file_path)) {
       // There is no MODS but there is MARCXML.
       $cb_utilities = new Utilities();
       $path_to_marc_to_mods_xsl = drupal_get_path('module', 'islandora_batch') . '/transforms/MARC21slim2MODS3-4.xsl';
@@ -261,7 +263,7 @@ EOQ;
    * @param string $path_to_obj
    *   If present, the absolut path to the file to use as
    *   the OBJ datastream content.
-   **/
+   */
   private function ingestObjDatastream($path_to_obj = NULL) {
     if ($this['OBJ']) {
       return;
@@ -282,4 +284,3 @@ EOQ;
   }
 
 }
-

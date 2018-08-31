@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Module used to handle compound object batches through the UI and drush.
@@ -7,21 +8,21 @@
 /**
  * Implements hook_menu().
  */
-// function islandora_compound_batch_menu() {
-//   $items = array();
+function islandora_compound_batch_menu() {
+  $items = array();
 
-//   $items['islandora/object/%islandora_object/manage/collection/compound_batch'] = array(
-//     'title' => 'Compound Batch',
-//     'access callback' => 'islandora_compound_batch_menu_access',
-//     'access arguments' => array(2),
-//     'page callback' => 'drupal_get_form',
-//     'page arguments' => array('islandora_compound_batch_form', 2),
-//     'file' => 'includes/batch.form.inc',
-//     'type' => MENU_LOCAL_ACTION,
-//   );
+  $items['islandora/object/%islandora_object/manage/collection/compound_batch'] = array(
+    'title' => 'Compound Batch',
+    'access callback' => 'islandora_compound_batch_menu_access',
+    'access arguments' => array(2),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_compound_batch_form', 2),
+    'file' => 'includes/batch.form.inc',
+    'type' => MENU_LOCAL_ACTION,
+  );
 
-//   return $items;
-// }
+  return $items;
+}
 
 /**
  * Menu access callback.

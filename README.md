@@ -2,6 +2,8 @@
 
 ## Introduction
 
+This module has fixed the gui batch option, all drush documentation remains the same, but when using Compound Batch, structure files are no longer needed.
+
 This module extends the Islandora batch framework to provide a Drush command to ingest compound objects. Currently, only batches of compound objects that have a "flat" structure are supported. In other words, batches of compound objects whose children do not contain other children:
 
 ```

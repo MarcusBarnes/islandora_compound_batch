@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Implementation of classes from the batch ingest framework.
@@ -12,6 +13,7 @@ include $path . '/includes/utilities.inc';
 class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
   // Prefixed flag for outputing echo or print statements.
   protected $icbpVerbose = FALSE;
+
   /**
    * Function to get the OBJ XML files from the input directory.
    */
@@ -19,16 +21,25 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     if (strtolower($this->parameters['icbp_verbose']) == 'true') {
       $this->icbpVerbose = TRUE;
     }
+    if (isset($this->parameters['type']) && $this->parameters['type'] == 'zip') {
+      // @todo: Add a check for a falase return here.
+      $path_to_input_files = $this->openZip($this->parameters['target']);
+      require_once 'structure.inc';
+      $base_path = DRUPAL_ROOT;
+      $module_path = drupal_get_path('module', 'islandora_compound_batch');
+      scanWrapperDirectory($path_to_input_files, 'structure', $base_path . '/' . $module_path . '/extras/scripts/tree_to_compound_object.xsl');
+    }
+    else {
+      $path_to_input_files = $this->parameters['target'];
+    }
 
     // Accumulate a list of the objects added to the queue.
     $added = array();
 
-    $input_path = $this->parameters['target'];
-    // Add batchset_id property for use later in ingest phase in object.inc
-    // $batch_object->batchset_id = $this->getSetId();
+    // Add batchset_id property for use later in ingest phase in object.inc.
     $this->parameters['set_id'] = $this->getSetId();
 
-    $dir = new RecursiveDirectoryIterator($input_path);
+    $dir = new RecursiveDirectoryIterator($path_to_input_files);
     $iterator = new RecursiveIteratorIterator($dir);
 
     // Compound batch utilities class.
@@ -155,14 +166,14 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
 
         $parent_node = trim($parent_node->getNodePath());
         $insert_result = db_insert('islandora_compound_batch')
-                    ->fields(array(
-                        'object_id' => $object_id,
-                        'object_xpath' => $path,
-                        'parent_xpath' => $parent_node,
-                        'child_content_value' => $child_content_value,
-                        'parent_pid' => $compound_object_pid,
-                        'batch_id' => $batch_id,
-               ))->execute();
+          ->fields(array(
+            'object_id' => $object_id,
+            'object_xpath' => $path,
+            'parent_xpath' => $parent_node,
+            'child_content_value' => $child_content_value,
+            'parent_pid' => $compound_object_pid,
+            'batch_id' => $batch_id,
+          ))->execute();
 
         $this->icbpecho("Insert Result: $insert_result" . PHP_EOL);
       }
@@ -170,5 +181,29 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     }
 
   } // End of addStructureData
+
+  /**
+   * Expands the uploaded .zip file.
+   *
+   * @param string $zip_uri
+   *   The Drupal URI to the zip archive.
+   *
+   * @return string|bool
+   *   The filesystem path to the unzipped archive, or FALSE
+   *   if unzipping the archive failed.
+   */
+  protected function openZip($zip_uri) {
+    $zip = new ZipArchive();
+
+    $zip_file = drupal_realpath($zip_uri);
+    if (($error = $zip->open($zip_file)) !== TRUE) {
+      return FALSE;
+    }
+    $tmp_path = file_directory_temp() . DIRECTORY_SEPARATOR . pathinfo($zip_file, PATHINFO_FILENAME);
+    $zip->extractTo($tmp_path);
+
+    $zip->close();
+    return $tmp_path;
+  }
 
 }
