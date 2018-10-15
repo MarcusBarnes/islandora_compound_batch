@@ -16,19 +16,28 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    * Function to get the OBJ XML files from the input directory.
    */
   public function preprocess() {
+    $path_to_input_files = '';
     if (strtolower($this->parameters['icbp_verbose']) == 'true') {
       $this->icbpVerbose = TRUE;
+    }
+    if (isset($this->parameters['type']) && $this->parameters['type'] == 'zip') {
+      $path_to_input_files = $this->openZip($this->parameters['target']);
+      require_once 'structure.inc';
+      $base_path = DRUPAL_ROOT;
+      $module_path = drupal_get_path('module', 'islandora_compound_batch');
+      scanWrapperDirectory($path_to_input_files, 'structure', $base_path . '/' . $module_path . '/extras/scripts/tree_to_compound_object.xsl');
+    }
+    else {
+      $path_to_input_files = $this->parameters['target'];
     }
 
     // Accumulate a list of the objects added to the queue.
     $added = array();
-
-    $input_path = $this->parameters['target'];
     // Add batchset_id property for use later in ingest phase in object.inc
     // $batch_object->batchset_id = $this->getSetId();
     $this->parameters['set_id'] = $this->getSetId();
 
-    $dir = new RecursiveDirectoryIterator($input_path);
+    $dir = new RecursiveDirectoryIterator($path_to_input_files);
     $iterator = new RecursiveIteratorIterator($dir);
 
     // Compound batch utilities class.
@@ -170,5 +179,27 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
     }
 
   } // End of addStructureData
+
+  /**
+   * Expands the uploaded .zip file.
+   *
+   * @param string $zip_uri
+   *   The Drupal URI to the zip archive.
+   *
+   * @return string|bool
+   *   The filesystem path to the unzipped archive, or FALSE
+   *   if unzipping the archive failed.
+   */
+  protected function openZip($zip_uri) {
+    $zip = new ZipArchive();
+    $zip_file = drupal_realpath($zip_uri);
+    if (($error = $zip->open($zip_file)) !== TRUE) {
+      return FALSE;
+    }
+    $tmp_path = file_directory_temp() . DIRECTORY_SEPARATOR . pathinfo($zip_file, PATHINFO_FILENAME);
+    $zip->extractTo($tmp_path);
+    $zip->close();
+    return $tmp_path;
+  }
 
 }
