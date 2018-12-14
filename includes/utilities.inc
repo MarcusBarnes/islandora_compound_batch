@@ -42,6 +42,8 @@ class Utilities{
       'qt' => 'islandora:sp_videoCModel',
       'mov' => 'islandora:sp_videoCModel',
       'ogv' => 'islandora:sp_videoCModel',
+      'zip' => 'islandora:binaryObjectCModel',
+      'docx' => 'islandora:sp_document',
     );
   }
 
