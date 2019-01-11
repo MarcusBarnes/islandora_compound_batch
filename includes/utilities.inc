@@ -43,7 +43,10 @@ class Utilities{
       'mov' => 'islandora:sp_videoCModel',
       'ogv' => 'islandora:sp_videoCModel',
       'zip' => 'islandora:binaryObjectCModel',
+      'bin' => 'islandora:binaryObjectCModel',
       'docx' => 'islandora:sp_document',
+      'pptx' => 'islandora:sp_document',
+      'xlsx' => 'islandora:sp_document',
     );
   }
 
