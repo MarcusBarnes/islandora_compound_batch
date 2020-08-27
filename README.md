@@ -98,7 +98,7 @@ input_directory
 
 #### Step 2: Generating structure files
 
-Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_strcutre_files.php path/to/directory/containing/compound_objects`. Running this script will add a `structure.xml` file to each parent object:
+Once you have your content arranged, you will need to generate a 'structure file' for each object. To do this, run the `create_structure_files.php` script in this module's extras/scripts directory: `php create_structure_files.php path/to/directory/containing/compound_objects`. Running this script will add a `structure.xml` file to each parent object:
 
 ```
 input_directory
