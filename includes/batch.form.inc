@@ -58,6 +58,7 @@ function islandora_compound_batch_form($form, &$form_state, $object) {
  * May kick off a batch process.
  */
 function islandora_compound_batch_form_submit($form, $form_state) {
+  module_load_include('inc', 'islandora_compound_batch', 'includes/preprocessor');
   $target = file_load($form_state['values']['target']);
 
   $form_state['values']['target'] = $target->uri;
@@ -72,7 +73,7 @@ function islandora_compound_batch_form_submit($form, $form_state) {
     'content_models' => array('islandora:compoundCModel'),
   );
 
-  $preprocessor = new IslandoraCompoundBatch($connection, $parameters);
+  $preprocessor = new IslandoraCompoundBatchPreprocessor($connection, $parameters);
   file_usage_add($target, 'islandora_batch', 'islandora_batch_set', $preprocessor->getSetId());
 
   if ($form_state['values']['ingest_set_immediately']) {
